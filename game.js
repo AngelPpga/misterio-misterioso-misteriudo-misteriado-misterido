@@ -12,14 +12,15 @@ let bloqueado = true;
 let x = 2;
 let y = 2;
 const paso = 1.5;
-let intervalo = null;
 
-/* NIVELES */
+let intervalo = null;
+let teclas = {};
+
 const niveles = {
     1: [
         { x: 20, y: 0, w: 5, h: 70 },
         { x: 45, y: 20, w: 5, h: 60 },
-        { x: 60, y: 40, w: 20, h: 5 } // pared pequeña nueva
+        { x: 60, y: 40, w: 20, h: 5 }
     ],
     2: [
         { x: 25, y: 0, w: 5, h: 60 },
@@ -63,30 +64,27 @@ function actualizarJugador() {
     jugador.style.top = y + "%";
 }
 
-function mover(dx, dy) {
+/* TECLADO CONTINUO */
+document.addEventListener("keydown", e => {
+    teclas[e.key] = true;
+});
+
+document.addEventListener("keyup", e => {
+    teclas[e.key] = false;
+});
+
+setInterval(() => {
     if (bloqueado) return;
+    if (teclas["ArrowUp"]) mover(0, -paso);
+    if (teclas["ArrowDown"]) mover(0, paso);
+    if (teclas["ArrowLeft"]) mover(-paso, 0);
+    if (teclas["ArrowRight"]) mover(paso, 0);
+}, 40);
 
-    x += dx;
-    y += dy;
-    if (x < 0 || y < 0 || x > 95 || y > 95) return;
-
-    actualizarJugador();
-
-    if (colision(".pared")) {
-        x = 2;
-        y = 2;
-        actualizarJugador();
-    }
-
-    if (colision("#meta")) pasarNivel();
-}
-
-/* MOVIMIENTO CONTINUO */
+/* TÁCTIL CONTINUO */
 document.querySelectorAll("#controles button").forEach(btn => {
     btn.addEventListener("pointerdown", e => {
         e.preventDefault();
-        if (intervalo) return;
-
         const dir = btn.dataset.dir;
         intervalo = setInterval(() => {
             if (dir === "up") mover(0, -paso);
@@ -105,6 +103,19 @@ function detener() {
     intervalo = null;
 }
 
+function mover(dx, dy) {
+    x += dx;
+    y += dy;
+    if (x < 0 || y < 0 || x > 95 || y > 95) return;
+    actualizarJugador();
+    if (colision(".pared")) {
+        x = 2;
+        y = 2;
+        actualizarJugador();
+    }
+    if (colision("#meta")) pasarNivel();
+}
+
 function colision(selector) {
     const j = jugador.getBoundingClientRect();
     return [...document.querySelectorAll(selector)].some(el => {
@@ -118,7 +129,6 @@ function pasarNivel() {
     bloqueado = true;
     nivel++;
     if (nivel <= 3) {
-        mensaje.textContent = "Nivel superado";
         setTimeout(() => {
             bloqueado = false;
             cargarNivel();
