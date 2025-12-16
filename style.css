@@ -4,6 +4,7 @@ body {
     font-family: Arial, sans-serif;
     text-align: center;
     margin: 0;
+    overflow: hidden;
 }
 
 #mensaje {
@@ -12,13 +13,13 @@ body {
     height: 30px;
 }
 
-/* CONTENEDOR RESPONSIVE */
+/* CONTENEDOR */
 #contenedor {
     display: flex;
     justify-content: center;
 }
 
-/* LABERINTO ESCALABLE */
+/* LABERINTO ADAPTABLE */
 #laberinto {
     width: min(90vw, 400px);
     height: min(90vw, 400px);
@@ -70,6 +71,7 @@ body {
     border: none;
     background: #900;
     color: white;
+    touch-action: manipulation;
 }
 
 #controles .fila {
@@ -77,18 +79,16 @@ body {
     gap: 20px;
 }
 
-/* JUMPSCARE */
+/* VIDEO FINAL */
 #jumpscare {
     position: fixed;
     inset: 0;
     background: black;
     display: none;
-    justify-content: center;
-    align-items: center;
     z-index: 10;
 }
 
-#jumpscare img {
+#jumpscare video {
     width: 100%;
     height: 100%;
     object-fit: cover;

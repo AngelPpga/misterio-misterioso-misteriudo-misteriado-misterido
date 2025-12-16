@@ -3,15 +3,16 @@ const jugador = document.getElementById("jugador");
 const meta = document.getElementById("meta");
 const mensaje = document.getElementById("mensaje");
 const jumpscare = document.getElementById("jumpscare");
-const sonido = document.getElementById("sonido");
+const video = document.getElementById("videoFinal");
 
 let nivel = 1;
-let bloqueado = false; // 🔴 BLOQUEA MULTIPLES PASOS
+let bloqueado = false;
 
 let x = 2;
 let y = 2;
 const paso = 3;
 
+/* NIVELES EN PORCENTAJE */
 const niveles = {
     1: [
         { x: 20, y: 0, w: 5, h: 70 },
@@ -46,15 +47,16 @@ function cargarNivel() {
 
     x = 2;
     y = 2;
-    moverJugador();
+    actualizarJugador();
     mensaje.textContent = "Nivel " + nivel;
 }
 
-function moverJugador() {
+function actualizarJugador() {
     jugador.style.left = x + "%";
     jugador.style.top = y + "%";
 }
 
+/* TECLADO */
 document.addEventListener("keydown", e => {
     if (bloqueado) return;
 
@@ -64,8 +66,9 @@ document.addEventListener("keydown", e => {
     if (e.key === "ArrowRight") mover(paso, 0);
 });
 
+/* TÁCTIL (MÓVIL) */
 document.querySelectorAll("#controles button").forEach(btn => {
-    btn.addEventListener("touchstart", e => {
+    btn.addEventListener("pointerdown", e => {
         e.preventDefault();
         if (bloqueado) return;
 
@@ -85,13 +88,13 @@ function mover(dx, dy) {
 
     x = nx;
     y = ny;
-    moverJugador();
+    actualizarJugador();
 
     if (colision(".pared")) {
         mensaje.textContent = "💀 Reinicio";
         x = 2;
         y = 2;
-        moverJugador();
+        actualizarJugador();
     }
 
     if (colision("#meta")) {
@@ -103,8 +106,10 @@ function colision(selector) {
     const j = jugador.getBoundingClientRect();
     return [...document.querySelectorAll(selector)].some(el => {
         const r = el.getBoundingClientRect();
-        return j.left < r.right && j.right > r.left &&
-               j.top < r.bottom && j.bottom > r.top;
+        return j.left < r.right &&
+               j.right > r.left &&
+               j.top < r.bottom &&
+               j.bottom > r.top;
     });
 }
 
@@ -118,9 +123,10 @@ function pasarNivel() {
         mensaje.textContent = "Nivel superado";
         setTimeout(cargarNivel, 1200);
     } else {
-        mensaje.textContent = "💀";
-        jumpscare.style.display = "flex";
-        sonido.play();
+        mensaje.textContent = "";
+        jumpscare.style.display = "block";
+        video.currentTime = 0;
+        video.play();
     }
 }
 
