@@ -2,44 +2,42 @@ const jugador = document.getElementById("jugador");
 const meta = document.getElementById("meta");
 const laberinto = document.getElementById("laberinto");
 const barra = document.getElementById("barra");
+const mensaje = document.getElementById("mensaje");
 
 let nivel = 1;
 let x = 10, y = 10;
 let velocidad = 2;
 let moviendo = {};
-let bloqueado = false;
+let bloqueoCambio = false;
 
 const niveles = {
     1: [
-        { x: 30, y: 20, w: 5, h: 60, roja: false },
-        { x: 55, y: 10, w: 5, h: 70, roja: true },
-        { x: 75, y: 20, w: 5, h: 60, roja: false }
+        { x: 80, y: 20, w: 10, h: 200, roja: false }
     ],
     2: [
-        { x: 20, y: 10, w: 5, h: 80, roja: true },
-        { x: 40, y: 10, w: 5, h: 80, roja: false },
-        { x: 60, y: 10, w: 5, h: 80, roja: true }
+        { x: 60, y: 0, w: 10, h: 180, roja: true },
+        { x: 120, y: 100, w: 10, h: 200, roja: false }
     ],
     3: [
-        { x: 25, y: 5, w: 5, h: 85, roja: true },
-        { x: 50, y: 5, w: 5, h: 85, roja: false },
-        { x: 75, y: 5, w: 5, h: 85, roja: true }
+        { x: 80, y: 0, w: 10, h: 300, roja: true },
+        { x: 160, y: 120, w: 10, h: 200, roja: false }
     ]
 };
 
 function cargarNivel() {
     laberinto.querySelectorAll(".pared").forEach(p => p.remove());
-    barra.textContent = `Nivel ${nivel}`;
+    barra.textContent = "Nivel " + nivel;
+    mensaje.textContent = "";
     x = 10; y = 10;
     actualizarJugador();
 
     niveles[nivel].forEach(p => {
         const d = document.createElement("div");
         d.className = "pared" + (p.roja ? " roja" : "");
-        d.style.left = p.x + "%";
-        d.style.top = p.y + "%";
-        d.style.width = p.w + "%";
-        d.style.height = p.h + "%";
+        d.style.left = p.x + "px";
+        d.style.top = p.y + "px";
+        d.style.width = p.w + "px";
+        d.style.height = p.h + "px";
         laberinto.appendChild(d);
     });
 }
@@ -49,37 +47,36 @@ function actualizarJugador() {
     jugador.style.top = y + "px";
 }
 
-function colision(a, b) {
-    return !(
-        a.right < b.left ||
-        a.left > b.right ||
-        a.bottom < b.top ||
-        a.top > b.bottom
-    );
-}
-
 function rect(el) {
     return el.getBoundingClientRect();
 }
 
+function colision(a, b) {
+    return !(a.right < b.left || a.left > b.right || a.bottom < b.top || a.top > b.bottom);
+}
+
 function reiniciar() {
+    mensaje.textContent = "Reiniciaste el nivel, no toques las paredes";
     x = 10; y = 10;
     actualizarJugador();
 }
 
-function avanzarNivel() {
-    if (bloqueado) return;
-    bloqueado = true;
+function pasarNivel() {
+    if (bloqueoCambio) return;
+    bloqueoCambio = true;
 
-    if (nivel < 3) {
+    mensaje.textContent = "Pasaste al nivel " + (nivel + 1);
+
+    setTimeout(() => {
         nivel++;
-        cargarNivel();
-    } else {
-        document.getElementById("juego").classList.add("oculto");
-        document.getElementById("final").classList.remove("oculto");
-    }
-
-    setTimeout(() => bloqueado = false, 1000);
+        if (nivel <= 3) {
+            cargarNivel();
+        } else {
+            document.getElementById("juego").classList.add("oculto");
+            document.getElementById("final").classList.remove("oculto");
+        }
+        bloqueoCambio = false;
+    }, 1000);
 }
 
 setInterval(() => {
@@ -92,17 +89,16 @@ setInterval(() => {
 
     laberinto.querySelectorAll(".pared").forEach(p => {
         if (colision(rect(jugador), rect(p))) {
-            if (p.classList.contains("roja")) reiniciar();
-            else reiniciar();
+            reiniciar();
         }
     });
 
     if (colision(rect(jugador), rect(meta))) {
-        avanzarNivel();
+        pasarNivel();
     }
 }, 16);
 
-/* CONTROLES */
+/* CONTROLES TÁCTILES */
 document.querySelectorAll(".btn").forEach(btn => {
     const d = btn.dataset.dir;
     btn.addEventListener("touchstart", e => { e.preventDefault(); moviendo[d] = true; });

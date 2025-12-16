@@ -7,7 +7,7 @@
 
 body {
     margin: 0;
-    background: #000;
+    background: black;
     color: white;
     font-family: Arial, sans-serif;
     text-align: center;
@@ -19,14 +19,18 @@ body {
 
 /* BIENVENIDA */
 #bienvenida {
-    padding: 40px 20px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 #bienvenida button {
     background: white;
     color: black;
     border: none;
-    padding: 15px 25px;
+    padding: 15px 30px;
     font-size: 18px;
     border-radius: 10px;
 }
@@ -34,8 +38,12 @@ body {
 /* JUEGO */
 #barra {
     margin-top: 30px;
-    margin-bottom: 15px;
     font-size: 20px;
+}
+
+#mensaje {
+    margin: 10px;
+    min-height: 20px;
 }
 
 #laberinto {
@@ -45,16 +53,6 @@ body {
     background: #111;
     border: 4px solid red;
     position: relative;
-    overflow: hidden;
-}
-
-.pared {
-    position: absolute;
-    background: gray;
-}
-
-.pared.roja {
-    background: red;
 }
 
 #jugador {
@@ -73,6 +71,15 @@ body {
     position: absolute;
     right: 10px;
     bottom: 10px;
+}
+
+.pared {
+    position: absolute;
+    background: gray;
+}
+
+.pared.roja {
+    background: red;
 }
 
 /* CONTROLES */

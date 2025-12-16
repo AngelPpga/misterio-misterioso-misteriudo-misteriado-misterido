@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Anchetudaaa</title>
+    <title>Anchetudaaaaa</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Favicon calavera -->
@@ -13,32 +13,38 @@
 </head>
 
 <body>
+
 <div id="bienvenida">
     <h1>💀 Bienvenides 💀</h1>
-    <p>Completa los <b>3 niveles</b> del laberinto<br>
-       y participa en la rifa de una <b>ancheta 🎁</b></p>
+    <p>
+        Completa los <b>3 niveles</b><br>
+        y participa en la rifa de una <b>ancheta 🎁</b>
+    </p>
     <button id="btnIniciar">COMENZAR</button>
 </div>
 
 <div id="juego" class="oculto">
     <div id="barra">Nivel 1</div>
+
+    <div id="mensaje"></div>
+
     <div id="laberinto">
         <div id="jugador"></div>
         <div id="meta"></div>
     </div>
 
     <div id="controles">
-        <button class="btn" data-dir="up">💀</button>
+        <button class="btn" data-dir="up">▲</button>
         <div>
-            <button class="btn" data-dir="left">⬅</button>
-            <button class="btn" data-dir="down">⬇</button>
-            <button class="btn" data-dir="right">➡</button>
+            <button class="btn" data-dir="left">◀</button>
+            <button class="btn" data-dir="down">▼</button>
+            <button class="btn" data-dir="right">▶</button>
         </div>
     </div>
 </div>
 
 <div id="final" class="oculto">
-    <video id="videoFinal" autoplay muted loop playsinline>
+    <video autoplay muted loop playsinline>
         <source src="piolin.mp4" type="video/mp4">
     </video>
 </div>
