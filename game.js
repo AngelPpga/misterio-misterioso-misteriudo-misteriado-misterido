@@ -17,31 +17,24 @@ const paso = 1.5;
 let teclas = {};
 let intervalo = null;
 let puedePasar = true;
-let videoLoops = 0; // Contador de loops del video
-let videoProtegido = true; // Protección contra clicks accidentales
+let videoLoops = 0;
+let videoProtegido = true;
 
-/* DEFINICIÓN DE NIVELES ESTRATÉGICOS - 3 PAREDES POR NIVEL */
+/* DEFINICIÓN DE NIVELES */
 const niveles = {
-    1: [ // 1 roja, 2 grises
-        // Pared roja diagonal que divide el área en dos
+    1: [
         { x: 30, y: 20, w: 5, h: 60, roja: true },
-        // Pared gris horizontal que bloquea camino directo a meta
         { x: 20, y: 60, w: 25, h: 5, roja: false },
-        // Pared gris vertical que crea un pasillo indirecto
         { x: 65, y: 30, w: 5, h: 40, roja: false }
     ],
 
-    2: [ // 2 rojas, 1 gris
-        // Primera pared roja - diagonal superior izquierda
+    2: [
         { x: 25, y: 15, w: 5, h: 50, roja: true },
-        // Segunda pared roja - diagonal inferior derecha
         { x: 60, y: 35, w: 5, h: 50, roja: true },
-        // Pared gris estratégica - fuerza a tomar camino sinuoso
         { x: 45, y: 45, w: 10, h: 5, roja: false }
     ],
 
-    3: [ // 3 rojas
-        // Tres paredes rojas que forman un triángulo de peligro
+    3: [
         { x: 20, y: 20, w: 5, h: 60, roja: true },
         { x: 50, y: 10, w: 5, h: 60, roja: true },
         { x: 75, y: 30, w: 5, h: 50, roja: true }
@@ -76,7 +69,6 @@ function cargarNivel() {
     reposicionarMeta();
     reiniciarJugador();
     mensaje.textContent = `Nivel ${nivel} - ¡Encuentra el camino seguro!`;
-    // Restaurar estilo rojo normal
     mensaje.style.color = "red";
     mensaje.style.textShadow = "0 0 8px red";
     mensaje.style.animation = "textGlow 2s infinite";
@@ -87,17 +79,14 @@ function cargarNivel() {
 function reposicionarMeta() {
     switch(nivel) {
         case 1:
-            // Meta en esquina inferior derecha, pasar por pasillo creado por paredes
             meta.style.left = "90%";
             meta.style.top = "90%";
             break;
         case 2:
-            // Meta en centro superior, evitar las dos diagonales rojas
             meta.style.left = "50%";
             meta.style.top = "15%";
             break;
         case 3:
-            // Meta en esquina superior derecha, navegar entre las tres rojas
             meta.style.left = "92%";
             meta.style.top = "15%";
             break;
@@ -156,21 +145,80 @@ setInterval(() => {
     }
 }, 35);
 
-/* TÁCTIL CONTINUO */
+/* TÁCTIL CONTINUO - CORREGIDO */
 document.querySelectorAll("#controles button").forEach(btn => {
-    btn.addEventListener("pointerdown", e => {
+    let isPressing = false;
+    
+    // Evento cuando empieza a tocar
+    btn.addEventListener("touchstart", function(e) {
         e.preventDefault();
+        if (bloqueado) return;
+        
+        isPressing = true;
         const dir = btn.dataset.dir;
+        
+        // Iniciar movimiento inmediato
+        if (dir === "up") mover(0, -paso);
+        if (dir === "down") mover(0, paso);
+        if (dir === "left") mover(-paso, 0);
+        if (dir === "right") mover(paso, 0);
+        
+        // Iniciar intervalo
         intervalo = setInterval(() => {
-            if (dir === "up") mover(0, -paso);
-            if (dir === "down") mover(0, paso);
-            if (dir === "left") mover(-paso, 0);
-            if (dir === "right") mover(paso, 0);
+            if (isPressing && !bloqueado) {
+                if (dir === "up") mover(0, -paso);
+                if (dir === "down") mover(0, paso);
+                if (dir === "left") mover(-paso, 0);
+                if (dir === "right") mover(paso, 0);
+            } else {
+                detener();
+            }
+        }, 35);
+    }, { passive: false });
+    
+    // Evento cuando suelta el dedo (donde sea)
+    btn.addEventListener("touchend", function(e) {
+        e.preventDefault();
+        isPressing = false;
+        detener();
+    }, { passive: false });
+    
+    // Evento cuando el dedo sale del botón (importante para móviles)
+    btn.addEventListener("touchcancel", function(e) {
+        e.preventDefault();
+        isPressing = false;
+        detener();
+    }, { passive: false });
+    
+    // También para mouse (por si acaso)
+    btn.addEventListener("mousedown", function(e) {
+        e.preventDefault();
+        if (bloqueado) return;
+        
+        isPressing = true;
+        const dir = btn.dataset.dir;
+        
+        intervalo = setInterval(() => {
+            if (isPressing && !bloqueado) {
+                if (dir === "up") mover(0, -paso);
+                if (dir === "down") mover(0, paso);
+                if (dir === "left") mover(-paso, 0);
+                if (dir === "right") mover(paso, 0);
+            } else {
+                detener();
+            }
         }, 35);
     });
-
-    btn.addEventListener("pointerup", detener);
-    btn.addEventListener("pointerleave", detener);
+    
+    btn.addEventListener("mouseup", function() {
+        isPressing = false;
+        detener();
+    });
+    
+    btn.addEventListener("mouseleave", function() {
+        isPressing = false;
+        detener();
+    });
 });
 
 function detener() {
@@ -263,12 +311,10 @@ function pasarNivel() {
     puedePasar = false;
     bloqueado = true;
     
-    // Cambiar TODO el estilo a verde - color, sombra y animación
     mensaje.style.color = "lime";
     mensaje.style.textShadow = "0 0 10px lime, 0 0 20px lime";
     mensaje.style.animation = "textGlowGreen 1.5s infinite";
     
-    // Añadir animación verde si no existe
     if (!document.querySelector('#green-glow-style')) {
         const greenStyle = document.createElement('style');
         greenStyle.id = 'green-glow-style';
@@ -299,40 +345,30 @@ function pasarNivel() {
             cargarNivel();
         }, 500);
     } else {
-        // Nivel 3 completado - Mostrar video
         mensaje.textContent = "¡HAS GANADO! Preparando sorpresa...";
         
         setTimeout(() => {
-            // Resetear contador de loops
             videoLoops = 0;
             videoProtegido = true;
             
-            // Configurar eventos del video
             video.onended = null;
             video.onclick = null;
             video.ontimeupdate = null;
             
-            // Mostrar pantalla del video
             jumpscare.style.display = "block";
-            
-            // Mostrar mensaje especial
             mensajeVideoTop.style.display = "block";
             
-            // Activar sonido
             video.muted = false;
             video.volume = 1.0;
             
-            // Intentar reproducir
             const playPromise = video.play();
             if (playPromise !== undefined) {
                 playPromise.catch(e => {
                     console.log("Error al reproducir video:", e);
-                    // Si falla por políticas de autoplay, mostrar mensaje
                     mostrarMensajeVideo();
                 });
             }
             
-            // Configurar protección y contador de loops
             configurarProteccionVideo();
             
         }, 1000);
@@ -340,20 +376,14 @@ function pasarNivel() {
 }
 
 function configurarProteccionVideo() {
-    // Reiniciar contadores
     videoLoops = 0;
     videoProtegido = true;
     
-    // Detectar cuando el video reinicia (completa un loop)
     video.addEventListener('timeupdate', function() {
-        // Si el video está cerca del final (último 10%)
         if (this.currentTime > this.duration * 0.9) {
-            // Incrementar contador cuando se complete
             setTimeout(() => {
                 videoLoops++;
-                console.log(`Video loop completado: ${videoLoops}`);
                 
-                // Después de 3 loops, permitir click para salir
                 if (videoLoops >= 3) {
                     videoProtegido = false;
                     mostrarBotonSalir();
@@ -362,22 +392,18 @@ function configurarProteccionVideo() {
         }
     });
     
-    // Controlar clicks en el video
     video.onclick = function(e) {
         e.preventDefault();
         e.stopPropagation();
         
         if (!videoProtegido) {
-            // Después de 3 loops, permitir salir
             cerrarVideo();
         } else {
-            // Mostrar mensaje de protección
             mostrarMensajeProteccion();
         }
         return false;
     };
     
-    // También proteger el contenedor
     jumpscare.onclick = function(e) {
         e.preventDefault();
         e.stopPropagation();
@@ -390,7 +416,6 @@ function configurarProteccionVideo() {
         return false;
     };
     
-    // Permitir salir con tecla Escape en cualquier momento
     document.addEventListener('keydown', function videoKeyHandler(e) {
         if (e.key === 'Escape') {
             cerrarVideo();
@@ -400,7 +425,6 @@ function configurarProteccionVideo() {
 }
 
 function mostrarBotonSalir() {
-    // Crear botón para salir
     let botonSalir = document.getElementById('boton-salir');
     if (!botonSalir) {
         botonSalir = document.createElement('button');
@@ -434,7 +458,6 @@ function mostrarBotonSalir() {
 }
 
 function mostrarMensajeProteccion() {
-    // Crear mensaje temporal
     let mensajeProteccion = document.getElementById('mensaje-proteccion');
     if (!mensajeProteccion) {
         mensajeProteccion = document.createElement('div');
@@ -465,7 +488,6 @@ function mostrarMensajeProteccion() {
 }
 
 function mostrarMensajeVideo() {
-    // Mensaje si no se puede reproducir automáticamente
     let mensajeVideo = document.getElementById('mensaje-video');
     if (!mensajeVideo) {
         mensajeVideo = document.createElement('div');
@@ -498,23 +520,19 @@ function mostrarMensajeVideo() {
 }
 
 function cerrarVideo() {
-    // Limpiar todo y volver al inicio
     video.pause();
     video.currentTime = 0;
     video.muted = true;
     videoLoops = 0;
     videoProtegido = true;
     
-    // Ocultar mensaje del video
     mensajeVideoTop.style.display = "none";
     
-    // Remover botón de salir si existe
     const botonSalir = document.getElementById('boton-salir');
     if (botonSalir) {
         botonSalir.parentNode.removeChild(botonSalir);
     }
     
-    // Remover mensajes si existen
     const mensajeProteccion = document.getElementById('mensaje-proteccion');
     if (mensajeProteccion && mensajeProteccion.parentNode) {
         mensajeProteccion.parentNode.removeChild(mensajeProteccion);
@@ -525,13 +543,11 @@ function cerrarVideo() {
         mensajeVideo.parentNode.removeChild(mensajeVideo);
     }
     
-    // Remover estilo de animación verde si existe
     const greenStyle = document.getElementById('green-glow-style');
     if (greenStyle) {
         greenStyle.parentNode.removeChild(greenStyle);
     }
     
-    // Ocultar video y mostrar inicio
     jumpscare.style.display = "none";
     nivel = 1;
     inicio.style.display = "flex";
