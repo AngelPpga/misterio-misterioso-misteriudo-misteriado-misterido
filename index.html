@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <title>Anchetudaaaaa 💀</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     
     <link rel="icon" type="image/svg+xml"
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💀</text></svg>">
@@ -11,33 +13,15 @@
     <link rel="stylesheet" href="style.css">
     
     <style>
-        .pared-roja {
-            background: red !important;
-            border: 1px solid darkred !important;
-        }
+        .pared-roja { background: red !important; border: 1px solid darkred !important; }
+        .pared-gris { background: #444 !important; border: 1px solid #666 !important; }
+        #jugador { transition: left 0.1s ease, top 0.1s ease !important; }
+        html, body { overflow: hidden; height: 100%; touch-action: none; -webkit-tap-highlight-color: transparent; }
+        #boton-salir { font-weight: bold; letter-spacing: 0.5px; }
         
-        .pared-gris {
-            background: #444 !important;
-            border: 1px solid #666 !important;
-        }
-        
-        #jugador {
-            transition: left 0.1s ease, top 0.1s ease !important;
-        }
-        
-        html, body {
-            overflow: hidden;
-            height: 100%;
-            touch-action: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        /* Estilo para el botón de salida del video */
-        #boton-salir {
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+        /* Prevenir zoom y selección */
+        * { -webkit-touch-callout: none; -webkit-user-drag: none; }
+        input, textarea { -webkit-user-select: text; }
     </style>
 </head>
 <body>
@@ -45,15 +29,14 @@
         <div id="inicio">
             <h1>💀 ¡Bienvenides! 💀</h1>
             <p>
-                Completa los <strong style="color: white;">3 niveles</strong>  
-                <br>
-                y participa en la rifa de una <strong style="color: yellow;">ancheta 🎁</strong>
+                Completa los <strong style="color: white;">3 niveles</strong><br>
+                <strong style="color: yellow;">Gana la ancheta 🎁</strong>
             </p>
-            <button id="btnInicio">Comenzar Juego</button>
+            <button id="btnInicio">Comenzar</button>
         </div>
 
         <div id="hud">
-            <span id="mensaje">Presiona "Comenzar Juego" para iniciar</span>
+            <span id="mensaje">Presiona "Comenzar"</span>
         </div>
 
         <div id="contenedor">
@@ -74,33 +57,34 @@
     </div>
 
     <div id="jumpscare">
-        <video id="videoFinal" src="piolin.mp4" playsinline loop muted></video>
+        <video id="videoFinal" src="piolin.mp4" playsinline loop muted preload="auto"></video>
     </div>
 
     <script src="game.js"></script>
 
     <script>
-        // Prevenir acciones no deseadas
+        // Prevenir comportamientos no deseados en móvil
         document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('#controles button').forEach(button => {
-                button.addEventListener('touchstart', function(e) {
-                    e.preventDefault();
-                });
+            // Prevenir zoom
+            document.addEventListener('gesturestart', function(e) {
+                e.preventDefault();
             });
             
+            // Prevenir pull-to-refresh
             document.addEventListener('touchmove', function(e) {
-                e.preventDefault();
+                if (e.touches.length > 1) e.preventDefault();
             }, { passive: false });
             
-            // Prevenir zoom con doble toque
-            let lastTouchEnd = 0;
-            document.addEventListener('touchend', function(e) {
-                const now = Date.now();
-                if (now - lastTouchEnd <= 300) {
-                    e.preventDefault();
-                }
-                lastTouchEnd = now;
-            }, false);
+            // Optimizar para iOS
+            if (/(iPad|iPhone|iPod)/g.test(navigator.userAgent)) {
+                document.body.style.cursor = 'pointer';
+            }
+        });
+        
+        // Prevenir menú contextual largo en iOS
+        window.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
         });
     </script>
 </body>
