@@ -10,14 +10,9 @@ body {
     color: red;
     font-family: Arial, sans-serif;
     margin: 0;
-    padding: 10px 0 0 0; /* REDUCIDO padding top para SUBIR todo */
+    padding-top: 60px;
     overflow-x: hidden;
     text-align: center;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between; /* Distribuye espacio verticalmente */
 }
 
 /* INICIO */
@@ -35,14 +30,11 @@ body {
 
 #inicio h1 {
     font-size: 2.2rem;
-    margin-bottom: 20px;
 }
 
 #inicio p {
     font-size: 1.2rem;
     max-width: 420px;
-    line-height: 1.5;
-    margin-bottom: 30px;
 }
 
 #inicio button {
@@ -52,36 +44,30 @@ body {
     background: white;
     color: black;
     border: none;
-    cursor: pointer;
-    font-weight: bold;
 }
 
-/* HUD - COMPACTO */
+/* HUD */
 #hud {
-    margin-bottom: 10px; /* REDUCIDO */
+    margin-bottom: 12px;
     font-size: 18px;
-    padding: 8px 12px;
-    background: rgba(0, 0, 0, 0.8);
-    border-radius: 5px;
-    width: 90%;
-    max-width: 420px;
+    min-height: 24px;
 }
 
-/* CONTENEDOR DEL LABERINTO */
+/* JUEGO */
 #contenedor {
     display: flex;
     justify-content: center;
-    margin: 5px 0 10px 0; /* REDUCIDO margen inferior */
 }
 
 #laberinto {
-    width: min(90vw, 400px);
-    height: min(90vw, 400px);
+    width: min(90vw, 420px);
+    height: min(90vw, 420px);
     background: #111;
     border: 4px solid red;
     position: relative;
 }
 
+/* JUGADOR - CÍRCULO BLANCO */
 #jugador {
     width: 5%;
     height: 5%;
@@ -89,15 +75,29 @@ body {
     position: absolute;
     top: 2%;
     left: 2%;
+    border-radius: 50%;
+    box-shadow: 0 0 10px white;
+    z-index: 10;
 }
 
+/* META - AMARILLA CON ANIMACIÓN */
 #meta {
     width: 8%;
     height: 8%;
-    background: red;
+    background: yellow;
     position: absolute;
     bottom: 2%;
     right: 2%;
+    border-radius: 5px;
+    box-shadow: 0 0 10px yellow;
+    animation: pulse 1.5s infinite;
+    z-index: 5;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.7; }
+    50% { opacity: 1; }
+    100% { opacity: 0.7; }
 }
 
 /* PAREDES */
@@ -108,18 +108,21 @@ body {
 
 .pared-roja {
     background: red;
+    box-shadow: 0 0 5px rgba(255, 0, 0, 0.7);
 }
 
-/* CONTROLES - SUBIDOS Y VISIBLES */
+.pared-gris {
+    background: #444;
+    box-shadow: 0 0 3px rgba(255, 255, 255, 0.3);
+}
+
+/* CONTROLES */
 #controles {
-    margin-top: 15px; /* SUBIDOS - menos espacio arriba */
-    margin-bottom: 20px; /* Espacio en la parte inferior */
+    margin-top: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 10px;
-    padding: 10px;
-    flex-shrink: 0;
 }
 
 #controles button {
@@ -131,11 +134,6 @@ body {
     background: #900;
     color: white;
     touch-action: none;
-    cursor: pointer;
-}
-
-#controles button:active {
-    background: red;
 }
 
 #controles .fila {
@@ -177,15 +175,8 @@ body {
     display: block;
 }
 
-/* 📱 MOBILE - CONTROLES BIEN POSICIONADOS */
+/* 📱 MOBILE */
 @media (max-width: 600px) {
-    body {
-        padding: 5px 0 0 0; /* MÍNIMO padding top */
-        justify-content: flex-start; /* Empieza desde arriba */
-        height: 100vh;
-        overflow-y: auto; /* Permite scroll si es necesario */
-    }
-    
     #inicio h1 {
         font-size: 1.8rem;
     }
@@ -196,66 +187,5 @@ body {
 
     #hud {
         font-size: 16px;
-        padding: 6px 10px;
-        margin-bottom: 8px;
-    }
-    
-    #laberinto {
-        width: min(95vw, 350px);
-        height: min(95vw, 350px);
-        margin: 0 auto;
-    }
-    
-    /* CONTROLES - SUBIDOS EN MÓVIL */
-    #controles {
-        margin-top: 10px; /* MUY poco espacio arriba */
-        margin-bottom: 15px;
-        padding: 5px;
-    }
-    
-    #controles button {
-        width: 65px;
-        height: 65px;
-        font-size: 28px;
-    }
-    
-    #controles .fila {
-        gap: 15px;
-    }
-    
-    /* Asegurar que todo quepa */
-    #game-container {
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        justify-content: space-between;
-        width: 100%;
-        max-width: 100%;
-    }
-}
-
-/* Dispositivos muy altos */
-@media (min-height: 800px) {
-    #controles {
-        margin-top: 30px;
-    }
-}
-
-/* Dispositivos muy pequeños */
-@media (max-height: 600px) {
-    #laberinto {
-        width: min(85vw, 320px);
-        height: min(85vw, 320px);
-    }
-    
-    #controles {
-        margin-top: 5px;
-        margin-bottom: 10px;
-    }
-    
-    #controles button {
-        width: 55px;
-        height: 55px;
-        font-size: 24px;
     }
 }

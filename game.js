@@ -16,44 +16,38 @@ const paso = 1.5;
 let teclas = {};
 let intervalo = null;
 let puedePasar = true;
-let videoLoops = 0;
-let videoProtegido = true;
 
-/* DEFINICIÓN DE NIVELES - META MÁS DIFÍCIL */
+/* DEFINICIÓN DE NIVELES */
 const niveles = {
     1: [
-        // NIVEL 1: 1 roja, 2 grises - Meta dificil
-        { x: 35, y: 25, w: 6, h: 50, roja: true },    // Pared roja central
-        { x: 15, y: 40, w: 20, h: 5, roja: false },   // Pared gris superior
-        { x: 65, y: 55, w: 20, h: 5, roja: false }    // Pared gris inferior
+        // NIVEL 1: 1 pared roja, 2 grises
+        { x: 40, y: 20, w: 5, h: 60, roja: true },    // Pared roja vertical central
+        { x: 20, y: 30, w: 15, h: 5, roja: false },   // Pared gris horizontal superior
+        { x: 65, y: 60, w: 15, h: 5, roja: false }    // Pared gris horizontal inferior
     ],
 
     2: [
-        // NIVEL 2: 2 rojas, 1 gris - Meta más dificil
-        { x: 25, y: 20, w: 6, h: 60, roja: true },    // Pared roja izquierda
-        { x: 65, y: 20, w: 6, h: 60, roja: true },    // Pared roja derecha
-        { x: 40, y: 35, w: 20, h: 5, roja: false }    // Pared gris central
+        // NIVEL 2: 2 paredes rojas, 1 gris
+        { x: 30, y: 25, w: 5, h: 50, roja: true },    // Pared roja vertical izquierda
+        { x: 60, y: 25, w: 5, h: 50, roja: true },    // Pared roja vertical derecha
+        { x: 45, y: 40, w: 10, h: 5, roja: false }    // Pared gris central
     ],
 
     3: [
-        // NIVEL 3: 3 rojas - Meta MUY dificil
-        { x: 20, y: 15, w: 5, h: 70, roja: true },    // Pared roja izquierda
-        { x: 45, y: 15, w: 5, h: 70, roja: true },    // Pared roja centro
-        { x: 70, y: 15, w: 5, h: 70, roja: true }     // Pared roja derecha
+        // NIVEL 3: 3 paredes rojas - MÁS DIFÍCIL
+        // Primera pared: acceso solo por ABAJO (deja espacio arriba)
+        { x: 20, y: 30, w: 5, h: 55, roja: true },    // Pared 1: empieza al 30%, acceso por arriba
+        
+        // Segunda pared: acceso solo por ARRIBA (deja espacio abajo)
+        { x: 45, y: 10, w: 5, h: 55, roja: true },    // Pared 2: empieza al 10%, acceso por abajo
+        
+        // Tercera pared: acceso solo por ABAJO (deja espacio arriba)
+        { x: 70, y: 25, w: 5, h: 60, roja: true }     // Pared 3: empieza al 25%, acceso por arriba
     ]
 };
 
-const jugadorAncho = 4;
-const jugadorAlto = 4;
-
-// PRECARGAR EL VIDEO PARA QUE SEA INSTANTÁNEO
-function precargarVideo() {
-    video.load();
-    video.muted = true;
-    video.preload = "auto";
-}
-
-precargarVideo();
+const jugadorAncho = 5;
+const jugadorAlto = 5;
 
 btnInicio.onclick = () => {
     inicio.style.display = "none";
@@ -78,38 +72,30 @@ function cargarNivel() {
     });
 
     reposicionarMeta();
+    
     reiniciarJugador();
-    mensaje.textContent = `Nivel ${nivel}`;
+    mensaje.textContent = "Nivel " + nivel;
     puedePasar = true;
 }
 
 function reposicionarMeta() {
-    // META MÁS DIFÍCIL DE ALCANZAR
     switch(nivel) {
         case 1:
-            // Meta en esquina superior derecha entre paredes
-            meta.style.left = "88%";
-            meta.style.top = "10%";
+            meta.style.left = "90%";
+            meta.style.top = "90%";
             break;
         case 2:
-            // Meta en esquina inferior izquierda, difícil acceso
-            meta.style.left = "5%";
-            meta.style.top = "88%";
+            meta.style.left = "85%";
+            meta.style.top = "85%";
             break;
         case 3:
-            // Meta MUY difícil - en el centro derecho entre 3 paredes
             meta.style.left = "88%";
-            meta.style.top = "45%";
+            meta.style.top = "50%";
             break;
     }
-    
-    // Hacer la meta más pequeña
-    meta.style.width = "4.5%";
-    meta.style.height = "4.5%";
 }
 
 function reiniciarJugador() {
-    // Posición inicial también más desafiante
     x = 2;
     y = 2;
     actualizarJugador();
@@ -124,7 +110,6 @@ function actualizarJugador() {
 document.addEventListener("keydown", e => {
     if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
         teclas[e.key] = true;
-        e.preventDefault();
     }
 });
 
@@ -134,20 +119,13 @@ document.addEventListener("keyup", e => {
     }
 });
 
-// Loop de movimiento más rápido
 setInterval(() => {
     if (bloqueado) return;
-    
-    let dx = 0, dy = 0;
-    if (teclas["ArrowUp"]) dy = -paso;
-    if (teclas["ArrowDown"]) dy = paso;
-    if (teclas["ArrowLeft"]) dx = -paso;
-    if (teclas["ArrowRight"]) dx = paso;
-    
-    if (dx !== 0 || dy !== 0) {
-        mover(dx, dy);
-    }
-}, 30); // Más rápido
+    if (teclas["ArrowUp"]) mover(0, -paso);
+    if (teclas["ArrowDown"]) mover(0, paso);
+    if (teclas["ArrowLeft"]) mover(-paso, 0);
+    if (teclas["ArrowRight"]) mover(paso, 0);
+}, 40);
 
 /* TÁCTIL CONTINUO */
 document.querySelectorAll("#controles button").forEach(btn => {
@@ -159,7 +137,7 @@ document.querySelectorAll("#controles button").forEach(btn => {
             if (dir === "down") mover(0, paso);
             if (dir === "left") mover(-paso, 0);
             if (dir === "right") mover(paso, 0);
-        }, 30); // Más rápido
+        }, 40);
     });
 
     btn.addEventListener("pointerup", detener);
@@ -176,8 +154,8 @@ function mover(dx, dy) {
     const nuevoX = x + dx;
     const nuevoY = y + dy;
 
-    if (nuevoX < 0 || nuevoY < 0 || nuevoX > 96 || nuevoY > 96) {
-        reinicioPorError("¡Saliste del laberinto!");
+    if (nuevoX < 0 || nuevoY < 0 || nuevoX > 95 || nuevoY > 95) {
+        reinicioPorError();
         return;
     }
 
@@ -185,7 +163,7 @@ function mover(dx, dy) {
     const colisionGris = hayColision(nuevoX, nuevoY, false);
     
     if (colisionRoja) {
-        reinicioPorError("¡Tocaste una pared roja!");
+        reinicioPorError();
         return;
     }
     
@@ -196,7 +174,10 @@ function mover(dx, dy) {
     x = nuevoX;
     y = nuevoY;
     actualizarJugador();
-    verificarColisionMeta();
+
+    if (puedePasar && colision("#meta")) {
+        pasarNivel();
+    }
 }
 
 function hayColision(posX, posY, soloRojas) {
@@ -225,243 +206,81 @@ function hayColision(posX, posY, soloRojas) {
     return false;
 }
 
-function verificarColisionMeta() {
-    const jugadorRect = jugador.getBoundingClientRect();
-    const metaRect = meta.getBoundingClientRect();
+function colision(selector) {
+    const j = jugador.getBoundingClientRect();
+    const m = meta.getBoundingClientRect();
     
-    // Colisión más precisa con meta pequeña
-    const colisiona = !(jugadorRect.right < metaRect.left + 5 || 
-                       jugadorRect.left > metaRect.right - 5 || 
-                       jugadorRect.bottom < metaRect.top + 5 || 
-                       jugadorRect.top > metaRect.bottom - 5);
-    
-    if (colisiona && puedePasar) {
-        pasarNivel();
-    }
+    return !(j.right < m.left || 
+             j.left > m.right || 
+             j.bottom < m.top || 
+             j.top > m.bottom);
 }
 
-function reinicioPorError(mensajeError) {
-    mensaje.textContent = mensajeError;
-    
-    // Feedback visual más sutil
-    mensaje.style.color = "red";
-    setTimeout(() => {
-        mensaje.style.color = "red";
-    }, 1000);
-    
+function reinicioPorError() {
+    mensaje.textContent = "¡Haz reiniciado el nivel, no toques las paredes rojas!";
     reiniciarJugador();
-    
-    if (navigator.vibrate) {
-        navigator.vibrate(100);
-    }
 }
 
 function pasarNivel() {
     puedePasar = false;
     bloqueado = true;
-    
-    // Feedback positivo
-    mensaje.textContent = `¡Nivel ${nivel} completado!`;
-    mensaje.style.color = "lime";
-    
-    meta.style.transform = "scale(1.5)";
-    meta.style.boxShadow = "0 0 25px yellow";
-    
-    if (nivel < 3) {
-        // Cambio de nivel instantáneo
+    nivel++;
+
+    if (nivel <= 3) {
+        mensaje.textContent = "Pasaste al nivel " + nivel;
         setTimeout(() => {
-            nivel++;
             bloqueado = false;
-            mensaje.style.color = "red";
             cargarNivel();
-        }, 400); // Muy rápido
+        }, 1200);
     } else {
-        // Nivel 3 completado - Mostrar video INSTANTÁNEAMENTE
+        // Nivel 3 completado - SOLO CAMBIO AQUÍ
+        mensaje.textContent = "Pasaste al nivel " + nivel;
+        
         setTimeout(() => {
-            mostrarVideoFinal();
-        }, 300);
-    }
-}
-
-function mostrarVideoFinal() {
-    // Resetear contadores
-    videoLoops = 0;
-    videoProtegido = true;
-    
-    // Ocultar todo y mostrar video instantáneamente
-    document.querySelector("#game-container").style.display = "none";
-    jumpscare.style.display = "block";
-    
-    // Activar sonido y reproducir
-    video.muted = false;
-    video.volume = 1.0;
-    video.currentTime = 0;
-    
-    // Forzar reproducción inmediata
-    const playVideo = () => {
-        video.play().catch(e => {
-            console.log("Intentando reproducir video...");
-            // Si falla, esperar y reintentar
+            mensaje.textContent = "Cargando sorpresa...";
+            
             setTimeout(() => {
+                jumpscare.style.display = "block";
                 video.muted = false;
-                video.play();
-            }, 100);
-        });
-    };
-    
-    playVideo();
-    
-    // Configurar protección
-    configurarProteccionVideo();
-}
-
-function configurarProteccionVideo() {
-    // Detectar loops del video
-    video.addEventListener('timeupdate', function() {
-        if (this.currentTime > this.duration * 0.95 && this.duration > 0) {
-            setTimeout(() => {
-                videoLoops++;
-                console.log(`Loop ${videoLoops} completado`);
+                video.volume = 1.0;
+                video.play().catch(e => {
+                    console.log("Error al reproducir video:", e);
+                    mensaje.textContent = "Toca la pantalla para ver el video";
+                    video.onclick = function() {
+                        video.muted = false;
+                        video.play();
+                        mensaje.textContent = "";
+                    };
+                });
                 
-                if (videoLoops >= 3) {
-                    videoProtegido = false;
-                    mostrarBotonSalir();
-                }
-            }, 300);
-        }
-    });
-    
-    // Controlar clicks
-    video.onclick = jumpscare.onclick = function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        if (!videoProtegido) {
-            cerrarVideo();
-        } else {
-            mostrarMensajeProteccion();
-        }
-        return false;
-    };
-    
-    // Tecla Escape siempre funciona
-    document.addEventListener('keydown', function videoKeyHandler(e) {
-        if (e.key === 'Escape') {
-            cerrarVideo();
-            document.removeEventListener('keydown', videoKeyHandler);
-        }
-    });
-}
-
-function mostrarBotonSalir() {
-    let botonSalir = document.getElementById('boton-salir');
-    if (!botonSalir) {
-        botonSalir = document.createElement('button');
-        botonSalir.id = 'boton-salir';
-        botonSalir.innerHTML = 'SALIR';
-        botonSalir.style.cssText = `
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: red;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            font-size: 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            z-index: 40;
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
-            animation: pulse 1s infinite;
-        `;
-        document.body.appendChild(botonSalir);
-        
-        botonSalir.onclick = function(e) {
-            e.preventDefault();
-            cerrarVideo();
-            return false;
-        };
+                video.onended = function() {
+                    jumpscare.style.display = "none";
+                    video.currentTime = 0;
+                    video.muted = true;
+                    nivel = 1;
+                    inicio.style.display = "flex";
+                    bloqueado = true;
+                    mensaje.textContent = "¡Juego completado! Presiona 'Comenzar' para jugar otra vez";
+                };
+                
+                video.onclick = function() {
+                    jumpscare.style.display = "none";
+                    video.pause();
+                    video.currentTime = 0;
+                    video.muted = true;
+                    nivel = 1;
+                    inicio.style.display = "flex";
+                    bloqueado = true;
+                    mensaje.textContent = "¡Juego completado! Presiona 'Comenzar' para jugar otra vez";
+                };
+            }, 1000);
+        }, 1500);
     }
 }
 
-function mostrarMensajeProteccion() {
-    let mensajeProteccion = document.getElementById('mensaje-proteccion');
-    if (!mensajeProteccion) {
-        mensajeProteccion = document.createElement('div');
-        mensajeProteccion.id = 'mensaje-proteccion';
-        mensajeProteccion.innerHTML = 'Espera...<br>El video se repetirá 3 veces';
-        mensajeProteccion.style.cssText = `
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.85);
-            color: white;
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-            z-index: 35;
-            border: 2px solid red;
-            font-size: 14px;
-            animation: fadeInOut 2s forwards;
-        `;
-        document.body.appendChild(mensajeProteccion);
-        
-        setTimeout(() => {
-            if (mensajeProteccion.parentNode) {
-                mensajeProteccion.parentNode.removeChild(mensajeProteccion);
-            }
-        }, 2000);
-    }
-}
-
-function cerrarVideo() {
-    video.pause();
-    video.currentTime = 0;
-    video.muted = true;
-    videoLoops = 0;
-    videoProtegido = true;
-    
-    // Limpiar elementos
-    const botonSalir = document.getElementById('boton-salir');
-    if (botonSalir) botonSalir.remove();
-    
-    const mensajeProteccion = document.getElementById('mensaje-proteccion');
-    if (mensajeProteccion) mensajeProteccion.remove();
-    
-    // Volver al juego
-    jumpscare.style.display = "none";
-    document.querySelector("#game-container").style.display = "flex";
-    nivel = 1;
-    inicio.style.display = "flex";
-    bloqueado = true;
-    mensaje.textContent = "¡Juego completado!";
-    mensaje.style.color = "red";
-}
-
-// Añadir animación CSS
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes fadeInOut {
-        0% { opacity: 0; }
-        20% { opacity: 1; }
-        80% { opacity: 1; }
-        100% { opacity: 0; }
-    }
-    
-    @keyframes pulse {
-        0% { transform: translateX(-50%) scale(1); }
-        50% { transform: translateX(-50%) scale(1.05); }
-        100% { transform: translateX(-50%) scale(1); }
-    }
-`;
-document.head.appendChild(style);
-
-// Inicializar
 video.muted = true;
 video.loop = true;
 video.preload = "auto";
 video.addEventListener('contextmenu', e => e.preventDefault());
 
-mensaje.textContent = "Presiona 'Comenzar Juego'";
+mensaje.textContent = "Presiona 'Comenzar Juego' para iniciar";

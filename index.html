@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Anchetudaaaaa</title>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+
     <!-- FAVICON CALAVERA -->
     <link rel="icon" type="image/svg+xml"
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💀</text></svg>">
@@ -47,7 +48,7 @@
 <button id="recargar-btn" onclick="location.reload()">🔄 Reiniciar Juego</button>
 
 <div id="jumpscare">
-    <video id="videoFinal" src="piolin.mp4" playsinline loop muted></video>
+    <video id="videoFinal" src="piolin.mp4" playsinline loop muted preload="auto"></video>
 </div>
 
 <script src="game.js"></script>
@@ -67,14 +68,6 @@
     document.addEventListener('gesturestart', function(e) {
         e.preventDefault();
     });
-    
-    // Permitir scroll táctil si es necesario
-    document.addEventListener('touchmove', function(e) {
-        // Solo prevenir si estamos en los controles
-        if (e.target.closest('#controles')) {
-            e.preventDefault();
-        }
-    }, { passive: false });
 </script>
 </body>
 </html>
