@@ -45,6 +45,7 @@ body {
     background: #333;
 }
 
+/* JUMPSCARE */
 #jumpscare {
     position: fixed;
     inset: 0;
@@ -61,11 +62,12 @@ body {
     object-fit: cover;
 }
 
+/* CONTROLES TÁCTILES (MÓVIL) */
 #controles {
     position: fixed;
     bottom: 0;
     width: 100%;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0,0,0,0.7);
     padding: 20px 0;
     display: none;
 }
@@ -74,6 +76,7 @@ body {
     display: flex;
     justify-content: center;
     gap: 25px;
+    margin: 5px 0;
 }
 
 #controles button {
@@ -84,4 +87,10 @@ body {
     color: white;
     border: none;
     border-radius: 50%;
+}
+
+@media (max-width: 768px) {
+    #controles {
+        display: block;
+    }
 }

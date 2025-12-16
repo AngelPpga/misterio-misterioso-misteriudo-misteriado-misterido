@@ -14,17 +14,21 @@
     <div id="meta"></div>
 </div>
 
+<!-- CONTROLES TÁCTILES -->
 <div id="controles">
-    <button ontouchstart="moverTouch('up')">⬆️</button>
-    <div>
+    <div class="fila">
+        <button ontouchstart="moverTouch('up')">⬆️</button>
+    </div>
+    <div class="fila">
         <button ontouchstart="moverTouch('left')">⬅️</button>
+        <button ontouchstart="moverTouch('down')">⬇️</button>
         <button ontouchstart="moverTouch('right')">➡️</button>
     </div>
-    <button ontouchstart="moverTouch('down')">⬇️</button>
 </div>
 
+<!-- JUMPSCARE -->
 <div id="jumpscare">
-    <img src="nina.jpg">
+    <img src="nina.jpeg">
 </div>
 
 <audio id="sonido" src="sonido.mp3"></audio>

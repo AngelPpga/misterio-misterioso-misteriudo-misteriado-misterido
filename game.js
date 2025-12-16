@@ -13,8 +13,8 @@ const paso = 10;
 const niveles = {
     1: [
         { x: 50, y: 0, w: 20, h: 300 },
-        { x: 100, y: 100, w: 200, h: 20 },
-        { x: 250, y: 200, w: 20, h: 200 }
+        { x: 120, y: 100, w: 200, h: 20 },
+        { x: 280, y: 200, w: 20, h: 200 }
     ],
     2: [
         { x: 80, y: 0, w: 20, h: 250 },
@@ -47,7 +47,6 @@ function cargarNivel() {
     y = 10;
     jugador.style.left = x + "px";
     jugador.style.top = y + "px";
-
     mensaje.textContent = "Nivel " + nivel;
 }
 
@@ -67,14 +66,13 @@ function moverTouch(dir) {
 }
 
 function mover(dx, dy) {
-    const nuevoX = x + dx;
-    const nuevoY = y + dy;
+    const nx = x + dx;
+    const ny = y + dy;
 
-    if (nuevoX < 0 || nuevoY < 0 || nuevoX > 380 || nuevoY > 380) return;
+    if (nx < 0 || ny < 0 || nx > 380 || ny > 380) return;
 
-    const temp = jugador.getBoundingClientRect();
-    jugador.style.left = nuevoX + "px";
-    jugador.style.top = nuevoY + "px";
+    jugador.style.left = nx + "px";
+    jugador.style.top = ny + "px";
 
     if (colisionPared()) {
         mensaje.textContent = "💀 Volviste al inicio";
@@ -85,8 +83,8 @@ function mover(dx, dy) {
         return;
     }
 
-    x = nuevoX;
-    y = nuevoY;
+    x = nx;
+    y = ny;
 
     verificarMeta();
 }
@@ -116,14 +114,10 @@ function pasarNivel() {
         mensaje.textContent = "Pasaste al nivel " + nivel;
         setTimeout(cargarNivel, 1000);
     } else {
-        finalTerror();
+        mensaje.textContent = "💀";
+        jumpscare.style.display = "flex";
+        sonido.play();
     }
-}
-
-function finalTerror() {
-    mensaje.textContent = "💀";
-    jumpscare.style.display = "flex";
-    sonido.play();
 }
 
 cargarNivel();
