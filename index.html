@@ -1,49 +1,54 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Ancheta 2025</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Ancheta 2025</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="icon" type="image/svg+xml"
-          href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>💀</text></svg>">
+  <!-- favicon calavera -->
+  <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>💀</text></svg>">
 
-    <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<div id="bienvenida">
-    <h1>💀 Bienvenides 💀</h1>
-    <p>Completa los 3 niveles<br>y participa en la rifa de una ancheta</p>
-    <button id="btnIniciar">COMENZAR</button>
-</div>
+<!-- BIENVENIDA -->
+<section id="bienvenida">
+  <h1>💀 Bienvenides 💀</h1>
+  <p>
+    Completa los <b>3 niveles</b><br>
+    y participa en la rifa de una <b>ancheta 🎁</b>
+  </p>
+  <button id="btnIniciar">COMENZAR</button>
+</section>
 
-<div id="juego" class="oculto">
-    <div id="barra">Nivel 1</div>
-    <div id="mensaje"></div>
+<!-- JUEGO -->
+<section id="juego" class="oculto">
+  <div id="barra">Nivel 1</div>
+  <div id="mensaje"></div>
 
-    <div id="laberinto">
-        <div id="jugador"></div>
-        <div id="meta"></div>
+  <div id="laberinto">
+    <div id="jugador"></div>
+    <div id="meta"></div>
+  </div>
+
+  <div id="controles">
+    <button class="btn" data-dir="up">↑</button>
+    <div>
+      <button class="btn" data-dir="left">←</button>
+      <button class="btn" data-dir="down">↓</button>
+      <button class="btn" data-dir="right">→</button>
     </div>
+  </div>
+</section>
 
-    <div id="controles">
-        <button class="btn" data-dir="up">▲</button>
-        <div>
-            <button class="btn" data-dir="left">◀</button>
-            <button class="btn" data-dir="down">▼</button>
-            <button class="btn" data-dir="right">▶</button>
-        </div>
-    </div>
-</div>
-
-<!-- EL FINAL SIEMPRE OCULTO -->
-<div id="final" style="display:none;">
-    <video id="videoFinal" muted loop playsinline>
-        <source src="piolin.mp4" type="video/mp4">
-    </video>
-</div>
+<!-- FINAL -->
+<section id="final" class="oculto">
+  <video id="videoFinal" autoplay muted loop playsinline>
+    <source src="piolin.mp4" type="video/mp4">
+  </video>
+</section>
 
 <script src="game.js"></script>
 </body>
