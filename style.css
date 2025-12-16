@@ -12,37 +12,69 @@ body {
     height: 30px;
 }
 
+/* CONTENEDOR RESPONSIVE */
+#contenedor {
+    display: flex;
+    justify-content: center;
+}
+
+/* LABERINTO ESCALABLE */
 #laberinto {
-    width: 400px;
-    height: 400px;
-    margin: auto;
+    width: min(90vw, 400px);
+    height: min(90vw, 400px);
     position: relative;
     background: #111;
     border: 4px solid red;
 }
 
 #jugador {
-    width: 20px;
-    height: 20px;
+    width: 5%;
+    height: 5%;
     background: white;
     position: absolute;
-    top: 10px;
-    left: 10px;
+    top: 2%;
+    left: 2%;
     z-index: 2;
 }
 
 #meta {
-    width: 30px;
-    height: 30px;
+    width: 8%;
+    height: 8%;
     background: red;
     position: absolute;
-    bottom: 10px;
-    right: 10px;
+    bottom: 2%;
+    right: 2%;
 }
 
 .pared {
     position: absolute;
     background: #333;
+}
+
+/* CONTROLES TÁCTILES */
+#controles {
+    position: fixed;
+    bottom: 10px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+#controles button {
+    width: 70px;
+    height: 70px;
+    font-size: 30px;
+    border-radius: 50%;
+    border: none;
+    background: #900;
+    color: white;
+}
+
+#controles .fila {
+    display: flex;
+    gap: 20px;
 }
 
 /* JUMPSCARE */
@@ -60,37 +92,4 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
-}
-
-/* CONTROLES TÁCTILES (MÓVIL) */
-#controles {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background: rgba(0,0,0,0.7);
-    padding: 20px 0;
-    display: none;
-}
-
-#controles .fila {
-    display: flex;
-    justify-content: center;
-    gap: 25px;
-    margin: 5px 0;
-}
-
-#controles button {
-    width: 80px;
-    height: 80px;
-    font-size: 36px;
-    background: #900;
-    color: white;
-    border: none;
-    border-radius: 50%;
-}
-
-@media (max-width: 768px) {
-    #controles {
-        display: block;
-    }
 }

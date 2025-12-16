@@ -5,114 +5,118 @@ const mensaje = document.getElementById("mensaje");
 const jumpscare = document.getElementById("jumpscare");
 const sonido = document.getElementById("sonido");
 
-let x = 10;
-let y = 10;
 let nivel = 1;
-const paso = 10;
+let bloqueado = false; // 🔴 BLOQUEA MULTIPLES PASOS
+
+let x = 2;
+let y = 2;
+const paso = 3;
 
 const niveles = {
     1: [
-        { x: 50, y: 0, w: 20, h: 300 },
-        { x: 120, y: 100, w: 200, h: 20 },
-        { x: 280, y: 200, w: 20, h: 200 }
+        { x: 20, y: 0, w: 5, h: 70 },
+        { x: 40, y: 30, w: 40, h: 5 }
     ],
     2: [
-        { x: 80, y: 0, w: 20, h: 250 },
-        { x: 160, y: 150, w: 20, h: 250 },
-        { x: 240, y: 0, w: 20, h: 250 },
-        { x: 0, y: 300, w: 300, h: 20 }
+        { x: 25, y: 0, w: 5, h: 60 },
+        { x: 50, y: 20, w: 5, h: 80 },
+        { x: 0, y: 70, w: 60, h: 5 }
     ],
     3: [
-        { x: 60, y: 0, w: 20, h: 350 },
-        { x: 140, y: 50, w: 20, h: 350 },
-        { x: 220, y: 0, w: 20, h: 350 },
-        { x: 300, y: 50, w: 20, h: 350 }
+        { x: 20, y: 0, w: 5, h: 90 },
+        { x: 45, y: 10, w: 5, h: 90 },
+        { x: 70, y: 0, w: 5, h: 90 }
     ]
 };
 
 function cargarNivel() {
+    bloqueado = false;
+
     document.querySelectorAll(".pared").forEach(p => p.remove());
 
     niveles[nivel].forEach(p => {
         const pared = document.createElement("div");
         pared.className = "pared";
-        pared.style.left = p.x + "px";
-        pared.style.top = p.y + "px";
-        pared.style.width = p.w + "px";
-        pared.style.height = p.h + "px";
+        pared.style.left = p.x + "%";
+        pared.style.top = p.y + "%";
+        pared.style.width = p.w + "%";
+        pared.style.height = p.h + "%";
         laberinto.appendChild(pared);
     });
 
-    x = 10;
-    y = 10;
-    jugador.style.left = x + "px";
-    jugador.style.top = y + "px";
+    x = 2;
+    y = 2;
+    moverJugador();
     mensaje.textContent = "Nivel " + nivel;
 }
 
+function moverJugador() {
+    jugador.style.left = x + "%";
+    jugador.style.top = y + "%";
+}
+
 document.addEventListener("keydown", e => {
-    if (nivel > 3) return;
+    if (bloqueado) return;
+
     if (e.key === "ArrowUp") mover(0, -paso);
     if (e.key === "ArrowDown") mover(0, paso);
     if (e.key === "ArrowLeft") mover(-paso, 0);
     if (e.key === "ArrowRight") mover(paso, 0);
 });
 
-function moverTouch(dir) {
-    if (dir === "up") mover(0, -paso);
-    if (dir === "down") mover(0, paso);
-    if (dir === "left") mover(-paso, 0);
-    if (dir === "right") mover(paso, 0);
-}
+document.querySelectorAll("#controles button").forEach(btn => {
+    btn.addEventListener("touchstart", e => {
+        e.preventDefault();
+        if (bloqueado) return;
+
+        const dir = btn.dataset.dir;
+        if (dir === "up") mover(0, -paso);
+        if (dir === "down") mover(0, paso);
+        if (dir === "left") mover(-paso, 0);
+        if (dir === "right") mover(paso, 0);
+    });
+});
 
 function mover(dx, dy) {
     const nx = x + dx;
     const ny = y + dy;
 
-    if (nx < 0 || ny < 0 || nx > 380 || ny > 380) return;
-
-    jugador.style.left = nx + "px";
-    jugador.style.top = ny + "px";
-
-    if (colisionPared()) {
-        mensaje.textContent = "💀 Volviste al inicio";
-        x = 10;
-        y = 10;
-        jugador.style.left = x + "px";
-        jugador.style.top = y + "px";
-        return;
-    }
+    if (nx < 0 || ny < 0 || nx > 95 || ny > 95) return;
 
     x = nx;
     y = ny;
+    moverJugador();
 
-    verificarMeta();
+    if (colision(".pared")) {
+        mensaje.textContent = "💀 Reinicio";
+        x = 2;
+        y = 2;
+        moverJugador();
+    }
+
+    if (colision("#meta")) {
+        pasarNivel();
+    }
 }
 
-function colisionPared() {
+function colision(selector) {
     const j = jugador.getBoundingClientRect();
-    return [...document.querySelectorAll(".pared")].some(p => {
-        const r = p.getBoundingClientRect();
+    return [...document.querySelectorAll(selector)].some(el => {
+        const r = el.getBoundingClientRect();
         return j.left < r.right && j.right > r.left &&
                j.top < r.bottom && j.bottom > r.top;
     });
 }
 
-function verificarMeta() {
-    const j = jugador.getBoundingClientRect();
-    const m = meta.getBoundingClientRect();
-
-    if (j.left < m.right && j.right > m.left &&
-        j.top < m.bottom && j.bottom > m.top) {
-        pasarNivel();
-    }
-}
-
 function pasarNivel() {
+    if (bloqueado) return;
+
+    bloqueado = true;
     nivel++;
+
     if (nivel <= 3) {
-        mensaje.textContent = "Pasaste al nivel " + nivel;
-        setTimeout(cargarNivel, 1000);
+        mensaje.textContent = "Nivel superado";
+        setTimeout(cargarNivel, 1200);
     } else {
         mensaje.textContent = "💀";
         jumpscare.style.display = "flex";

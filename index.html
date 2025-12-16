@@ -3,26 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <title>Laberinto del Terror</title>
+
+    <!-- MUY IMPORTANTE PARA MÓVIL -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div id="mensaje">Nivel 1</div>
 
-<div id="laberinto">
-    <div id="jugador"></div>
-    <div id="meta"></div>
+<div id="contenedor">
+    <div id="laberinto">
+        <div id="jugador"></div>
+        <div id="meta"></div>
+    </div>
 </div>
 
 <!-- CONTROLES TÁCTILES -->
 <div id="controles">
+    <button data-dir="up">⬆️</button>
     <div class="fila">
-        <button ontouchstart="moverTouch('up')">⬆️</button>
-    </div>
-    <div class="fila">
-        <button ontouchstart="moverTouch('left')">⬅️</button>
-        <button ontouchstart="moverTouch('down')">⬇️</button>
-        <button ontouchstart="moverTouch('right')">➡️</button>
+        <button data-dir="left">⬅️</button>
+        <button data-dir="down">⬇️</button>
+        <button data-dir="right">➡️</button>
     </div>
 </div>
 
