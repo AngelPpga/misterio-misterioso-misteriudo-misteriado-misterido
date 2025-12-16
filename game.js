@@ -37,6 +37,9 @@ const niveles = {
     ]
 };
 
+// Agrega estos parámetros para un mejor manejo de colisiones
+const jugadorAncho = 4; // % del ancho del jugador
+const jugadorAlto = 4;  // % del alto del jugador
 
 btnInicio.onclick = () => {
     inicio.style.display = "none";
@@ -109,41 +112,81 @@ function detener() {
     intervalo = null;
 }
 
-/* MOVIMIENTO */
+/* MOVIMIENTO - FUNCIÓN CORREGIDA */
 function mover(dx, dy) {
-    x += dx;
-    y += dy;
+    const nuevoX = x + dx;
+    const nuevoY = y + dy;
 
-    if (x < 0 || y < 0 || x > 95 || y > 95) {
+    // Verificar límites del laberinto (0-95 para dejar espacio al jugador)
+    if (nuevoX < 0 || nuevoY < 0 || nuevoX > 96 || nuevoY > 96) {
         reinicioPorError();
         return;
     }
 
-    actualizarJugador();
-
-    if (colision(".pared") || colision(".pared-roja")) {
+    // Verificar colisiones ANTES de mover
+    const colisiona = verificarColision(nuevoX, nuevoY);
+    
+    if (colisiona) {
         reinicioPorError();
+        return;
     }
 
+    // Solo mover si no hay colisión
+    x = nuevoX;
+    y = nuevoY;
+    actualizarJugador();
+
+    // Verificar si llegó a la meta
     if (puedePasar && colision("#meta")) {
         pasarNivel();
     }
 }
 
-function reinicioPorError() {
-    mensaje.textContent = "Haz reiniciado el nivel, no toques las paredes";
-    reiniciarJugador();
+// Función mejorada para verificar colisiones
+function verificarColision(posX, posY) {
+    // Simular la posición del jugador
+    const jLeft = posX;
+    const jRight = posX + jugadorAncho;
+    const jTop = posY;
+    const jBottom = posY + jugadorAlto;
+
+    // Verificar colisiones con paredes
+    for (const pared of niveles[nivel]) {
+        const pLeft = pared.x;
+        const pRight = pared.x + pared.w;
+        const pTop = pared.y;
+        const pBottom = pared.y + pared.h;
+
+        // Si es pared roja y puedePasar es true, no colisiona
+        if (pared.roja && puedePasar) {
+            continue;
+        }
+
+        // Verificar colisión
+        if (jLeft < pRight &&
+            jRight > pLeft &&
+            jTop < pBottom &&
+            jBottom > pTop) {
+            return true; // Hay colisión
+        }
+    }
+    
+    return false; // No hay colisión
 }
 
 function colision(selector) {
     const j = jugador.getBoundingClientRect();
-    return [...document.querySelectorAll(selector)].some(el => {
-        const r = el.getBoundingClientRect();
-        return j.left < r.right &&
-               j.right > r.left &&
-               j.top < r.bottom &&
-               j.bottom > r.top;
-    });
+    const m = meta.getBoundingClientRect();
+    
+    return !(j.right < m.left || 
+             j.left > m.right || 
+             j.bottom < m.top || 
+             j.top > m.bottom);
+}
+
+function reinicioPorError() {
+    mensaje.textContent = "Haz reiniciado el nivel, no toques las paredes";
+    reiniciarJugador();
 }
 
 function pasarNivel() {
