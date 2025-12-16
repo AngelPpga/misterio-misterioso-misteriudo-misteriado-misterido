@@ -2,10 +2,9 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Anchetudaaaaa</title>
+    <title>Ancheta 2025</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Favicon calavera -->
     <link rel="icon" type="image/svg+xml"
           href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>💀</text></svg>">
 
@@ -16,16 +15,12 @@
 
 <div id="bienvenida">
     <h1>💀 Bienvenides 💀</h1>
-    <p>
-        Completa los <b>3 niveles</b><br>
-        y participa en la rifa de una <b>ancheta 🎁</b>
-    </p>
+    <p>Completa los 3 niveles<br>y participa en la rifa de una ancheta</p>
     <button id="btnIniciar">COMENZAR</button>
 </div>
 
 <div id="juego" class="oculto">
     <div id="barra">Nivel 1</div>
-
     <div id="mensaje"></div>
 
     <div id="laberinto">
@@ -43,8 +38,9 @@
     </div>
 </div>
 
-<div id="final" class="oculto">
-    <video autoplay muted loop playsinline>
+<!-- EL FINAL SIEMPRE OCULTO -->
+<div id="final" style="display:none;">
+    <video id="videoFinal" muted loop playsinline>
         <source src="piolin.mp4" type="video/mp4">
     </video>
 </div>

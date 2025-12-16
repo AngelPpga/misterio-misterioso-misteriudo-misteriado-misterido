@@ -8,19 +8,19 @@ let nivel = 1;
 let x = 10, y = 10;
 let velocidad = 2;
 let moviendo = {};
-let bloqueoCambio = false;
+let bloqueo = false;
 
 const niveles = {
     1: [
-        { x: 80, y: 20, w: 10, h: 200, roja: false }
+        {x: 100, y: 0, w: 20, h: 250, roja: false},
+        {x: 180, y: 100, w: 20, h: 260, roja: true}
     ],
     2: [
-        { x: 60, y: 0, w: 10, h: 180, roja: true },
-        { x: 120, y: 100, w: 10, h: 200, roja: false }
+        {x: 80, y: 0, w: 20, h: 300, roja: true},
+        {x: 160, y: 60, w: 20, h: 300, roja: false}
     ],
     3: [
-        { x: 80, y: 0, w: 10, h: 300, roja: true },
-        { x: 160, y: 120, w: 10, h: 200, roja: false }
+        {x: 120, y: 0, w: 20, h: 320, roja: true}
     ]
 };
 
@@ -29,7 +29,7 @@ function cargarNivel() {
     barra.textContent = "Nivel " + nivel;
     mensaje.textContent = "";
     x = 10; y = 10;
-    actualizarJugador();
+    actualizar();
 
     niveles[nivel].forEach(p => {
         const d = document.createElement("div");
@@ -42,13 +42,9 @@ function cargarNivel() {
     });
 }
 
-function actualizarJugador() {
+function actualizar() {
     jugador.style.left = x + "px";
     jugador.style.top = y + "px";
-}
-
-function rect(el) {
-    return el.getBoundingClientRect();
 }
 
 function colision(a, b) {
@@ -58,70 +54,73 @@ function colision(a, b) {
 function reiniciar() {
     mensaje.textContent = "Reiniciaste el nivel, no toques las paredes";
     x = 10; y = 10;
-    actualizarJugador();
+    actualizar();
 }
 
 function pasarNivel() {
-    if (bloqueoCambio) return;
-    bloqueoCambio = true;
+    if (bloqueo) return;
+    bloqueo = true;
 
-    mensaje.textContent = "Pasaste al nivel " + (nivel + 1);
-
-    setTimeout(() => {
-        nivel++;
-        if (nivel <= 3) {
+    if (nivel < 3) {
+        mensaje.textContent = "Pasaste al nivel " + (nivel + 1);
+        setTimeout(() => {
+            nivel++;
             cargarNivel();
-        } else {
-            document.getElementById("juego").classList.add("oculto");
-            document.getElementById("final").classList.remove("oculto");
-        }
-        bloqueoCambio = false;
-    }, 1000);
+            bloqueo = false;
+        }, 1000);
+    } else {
+        document.getElementById("juego").classList.add("oculto");
+        const f = document.getElementById("final");
+        f.style.display = "block";
+        document.getElementById("videoFinal").play();
+    }
 }
 
 setInterval(() => {
+    let prevX = x;
+    let prevY = y;
+
     if (moviendo.up) y -= velocidad;
     if (moviendo.down) y += velocidad;
     if (moviendo.left) x -= velocidad;
     if (moviendo.right) x += velocidad;
 
-    actualizarJugador();
+    actualizar();
 
     laberinto.querySelectorAll(".pared").forEach(p => {
-        if (colision(rect(jugador), rect(p))) {
+        if (colision(jugador.getBoundingClientRect(), p.getBoundingClientRect())) {
             reiniciar();
         }
     });
 
-    if (colision(rect(jugador), rect(meta))) {
+    if (colision(jugador.getBoundingClientRect(), meta.getBoundingClientRect())) {
         pasarNivel();
     }
 }, 16);
 
-/* CONTROLES TÁCTILES */
+/* CONTROLES */
 document.querySelectorAll(".btn").forEach(btn => {
     const d = btn.dataset.dir;
-    btn.addEventListener("touchstart", e => { e.preventDefault(); moviendo[d] = true; });
-    btn.addEventListener("touchend", () => moviendo[d] = false);
-    btn.addEventListener("mousedown", () => moviendo[d] = true);
-    btn.addEventListener("mouseup", () => moviendo[d] = false);
+    btn.onmousedown = () => moviendo[d] = true;
+    btn.onmouseup = () => moviendo[d] = false;
+    btn.ontouchstart = e => { e.preventDefault(); moviendo[d] = true; };
+    btn.ontouchend = () => moviendo[d] = false;
 });
 
 /* TECLADO */
-window.addEventListener("keydown", e => {
+window.onkeydown = e => {
     if (e.key === "ArrowUp") moviendo.up = true;
     if (e.key === "ArrowDown") moviendo.down = true;
     if (e.key === "ArrowLeft") moviendo.left = true;
     if (e.key === "ArrowRight") moviendo.right = true;
-});
-window.addEventListener("keyup", e => {
+};
+window.onkeyup = e => {
     if (e.key === "ArrowUp") moviendo.up = false;
     if (e.key === "ArrowDown") moviendo.down = false;
     if (e.key === "ArrowLeft") moviendo.left = false;
     if (e.key === "ArrowRight") moviendo.right = false;
-});
+};
 
-/* INICIO */
 document.getElementById("btnIniciar").onclick = () => {
     document.getElementById("bienvenida").classList.add("oculto");
     document.getElementById("juego").classList.remove("oculto");

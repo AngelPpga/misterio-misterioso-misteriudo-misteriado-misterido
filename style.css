@@ -17,7 +17,6 @@ body {
     display: none;
 }
 
-/* BIENVENIDA */
 #bienvenida {
     height: 100vh;
     display: flex;
@@ -29,26 +28,24 @@ body {
 #bienvenida button {
     background: white;
     color: black;
-    border: none;
     padding: 15px 30px;
+    border: none;
     font-size: 18px;
     border-radius: 10px;
 }
 
-/* JUEGO */
 #barra {
     margin-top: 30px;
     font-size: 20px;
 }
 
 #mensaje {
-    margin: 10px;
-    min-height: 20px;
+    min-height: 24px;
 }
 
 #laberinto {
-    width: min(90vw, 420px);
-    height: min(90vw, 420px);
+    width: 360px;
+    height: 360px;
     margin: auto;
     background: #111;
     border: 4px solid red;
@@ -60,8 +57,8 @@ body {
     height: 20px;
     background: white;
     position: absolute;
-    top: 10px;
     left: 10px;
+    top: 10px;
 }
 
 #meta {
@@ -82,7 +79,6 @@ body {
     background: red;
 }
 
-/* CONTROLES */
 #controles {
     margin-top: 20px;
 }
@@ -95,15 +91,9 @@ body {
     border: none;
 }
 
-/* FINAL */
-#final {
+#final video {
     width: 100vw;
     height: 100vh;
-}
-
-#final video {
-    width: 100%;
-    height: 100%;
     object-fit: contain;
     background: black;
 }
