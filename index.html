@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Anchetudaaaaa 💀</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
     <!-- FAVICON CALAVERA -->
     <link rel="icon" type="image/svg+xml"
@@ -18,8 +18,20 @@
             border: 1px solid darkred !important;
         }
         
+        .pared-gris {
+            background: #444 !important;
+            border: 1px solid #666 !important;
+        }
+        
         #jugador {
             transition: left 0.1s ease, top 0.1s ease !important;
+        }
+        
+        /* Prevenir scroll */
+        html, body {
+            overflow: hidden;
+            height: 100%;
+            touch-action: none;
         }
     </style>
 </head>
@@ -36,7 +48,7 @@
 </div>
 
 <div id="hud">
-    <span id="mensaje">Preparando juego...</span>
+    <span id="mensaje">Presiona "Comenzar Juego" para iniciar</span>
 </div>
 
 <div id="contenedor">
@@ -72,10 +84,12 @@
             });
         });
         
-        // Iniciar con mensaje de bienvenida
-        setTimeout(() => {
-            document.getElementById('mensaje').textContent = 'Presiona "Comenzar Juego" para iniciar';
-        }, 1000);
+        // Prevenir scroll táctil
+        document.addEventListener('touchmove', function(e) {
+            if (e.target.closest('#laberinto, #controles')) {
+                e.preventDefault();
+            }
+        }, { passive: false });
     });
 </script>
 </body>
