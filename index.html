@@ -2,36 +2,48 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Anchetudaaaaa</title>
-
+    <title>Anchetudaaaaa 💀</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    
     <!-- FAVICON CALAVERA -->
     <link rel="icon" type="image/svg+xml"
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💀</text></svg>">
 
     <link rel="stylesheet" href="style.css">
+    
+    <style>
+        /* Estilos adicionales inline para asegurar funcionamiento */
+        .pared-roja {
+            background: red !important;
+            border: 1px solid darkred !important;
+        }
+        
+        #jugador {
+            transition: left 0.1s ease, top 0.1s ease !important;
+        }
+    </style>
 </head>
 <body>
 
 <div id="inicio">
     <h1>💀 ¡Bienvenides! 💀</h1>
     <p>
-        Completa los <strong>3 niveles</strong>  
+        Completa los <strong style="color: white;">3 niveles</strong>  
         <br>
-        y participa en la rifa de una <strong>ancheta 🎁</strong>
+        y participa en la rifa de una <strong style="color: yellow;">ancheta 🎁</strong>
     </p>
-    <button id="btnInicio">Comenzar</button>
+    <button id="btnInicio">Comenzar Juego</button>
 </div>
 
 <div id="hud">
-    <span id="mensaje"></span>
+    <span id="mensaje">Preparando juego...</span>
 </div>
 
 <div id="contenedor">
     <div id="laberinto">
         <div id="jugador"></div>
         <div id="meta"></div>
+        <!-- Las paredes se generan dinámicamente con JavaScript -->
     </div>
 </div>
 
@@ -45,9 +57,26 @@
 </div>
 
 <div id="jumpscare">
-    <video id="videoFinal" src="piolin.mp4" playsinline loop></video>
+    <video id="videoFinal" src="piolin.mp4" playsinline loop muted></video>
 </div>
 
 <script src="game.js"></script>
+
+<script>
+    // Script adicional para mejorar la experiencia
+    document.addEventListener('DOMContentLoaded', function() {
+        // Prevenir acciones por defecto en botones táctiles
+        document.querySelectorAll('#controles button').forEach(button => {
+            button.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+            });
+        });
+        
+        // Iniciar con mensaje de bienvenida
+        setTimeout(() => {
+            document.getElementById('mensaje').textContent = 'Presiona "Comenzar Juego" para iniciar';
+        }, 1000);
+    });
+</script>
 </body>
 </html>

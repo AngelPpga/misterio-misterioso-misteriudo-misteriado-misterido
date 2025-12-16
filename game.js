@@ -17,29 +17,30 @@ let teclas = {};
 let intervalo = null;
 let puedePasar = true;
 
-/* DEFINICIÓN DE NIVELES — TODO DENTRO DEL CUADRO 100×100 */
+/* DEFINICIÓN DE NIVELES - CONFIGURACIÓN MEJORADA */
 const niveles = {
     1: [
-        { x: 15, y: 10, w: 6, h: 60, roja: false },   // vertical
-        { x: 70, y: 10, w: 6, h: 65, roja: false }    // vertical
+        // NIVEL 1: 1 pared roja (horizontal en el centro)
+        { x: 30, y: 40, w: 40, h: 5, roja: true }   // Pared roja horizontal en el centro
     ],
 
     2: [
-        { x: 15, y: 10, w: 6, h: 60, roja: true },     // vertical roja
-        { x: 55, y: 15, w: 6, h: 70, roja: false },   // vertical
-        { x: 10, y: 70, w: 80, h: 6, roja: true }     // horizontal roja
+        // NIVEL 2: 2 paredes rojas (forma de L)
+        { x: 30, y: 30, w: 5, h: 40, roja: true },  // Vertical izquierda
+        { x: 30, y: 65, w: 40, h: 5, roja: true }   // Horizontal abajo
     ],
 
     3: [
-        { x: 20, y: 5, w: 6, h: 90, roja: true },     // vertical roja
-        { x: 47, y: 5, w: 6, h: 90, roja: false },    // vertical
-        { x: 74, y: 5, w: 6, h: 90, roja: true }      // vertical roja
+        // NIVEL 3: 3 paredes rojas (laberinto simple)
+        { x: 20, y: 20, w: 5, h: 60, roja: true },  // Vertical izquierda
+        { x: 40, y: 30, w: 40, h: 5, roja: true },  // Horizontal centro
+        { x: 70, y: 40, w: 5, h: 40, roja: true }   // Vertical derecha
     ]
 };
 
-// Agrega estos parámetros para un mejor manejo de colisiones
-const jugadorAncho = 4; // % del ancho del jugador
-const jugadorAlto = 4;  // % del alto del jugador
+// Dimensiones del jugador (más pequeñas para mejor maniobrabilidad)
+const jugadorAncho = 3;
+const jugadorAlto = 3;
 
 btnInicio.onclick = () => {
     inicio.style.display = "none";
@@ -48,8 +49,10 @@ btnInicio.onclick = () => {
 };
 
 function cargarNivel() {
+    // Limpiar paredes anteriores
     document.querySelectorAll(".pared, .pared-roja").forEach(p => p.remove());
 
+    // Crear nuevas paredes
     niveles[nivel].forEach(p => {
         const pared = document.createElement("div");
         pared.className = p.roja ? "pared-roja" : "pared";
@@ -57,17 +60,40 @@ function cargarNivel() {
             left: p.x + "%",
             top: p.y + "%",
             width: p.w + "%",
-            height: p.h + "%"
+            height: p.h + "%",
+            position: "absolute"
         });
         laberinto.appendChild(pared);
     });
 
+    // Posicionar meta según el nivel
+    reposicionarMeta();
+    
     reiniciarJugador();
     mensaje.textContent = "Nivel " + nivel;
     puedePasar = true;
 }
 
+function reposicionarMeta() {
+    // Posicionar la meta en diferentes lugares según el nivel
+    switch(nivel) {
+        case 1:
+            meta.style.left = "90%";
+            meta.style.top = "90%";
+            break;
+        case 2:
+            meta.style.left = "85%";
+            meta.style.top = "85%";
+            break;
+        case 3:
+            meta.style.left = "92%";
+            meta.style.top = "10%";
+            break;
+    }
+}
+
 function reiniciarJugador() {
+    // Posición inicial del jugador (esquina superior izquierda)
     x = 2;
     y = 2;
     actualizarJugador();
@@ -79,15 +105,31 @@ function actualizarJugador() {
 }
 
 /* TECLADO */
-document.addEventListener("keydown", e => teclas[e.key] = true);
-document.addEventListener("keyup", e => teclas[e.key] = false);
+document.addEventListener("keydown", e => {
+    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+        teclas[e.key] = true;
+    }
+});
 
+document.addEventListener("keyup", e => {
+    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+        teclas[e.key] = false;
+    }
+});
+
+// Loop de movimiento
 setInterval(() => {
     if (bloqueado) return;
-    if (teclas["ArrowUp"]) mover(0, -paso);
-    if (teclas["ArrowDown"]) mover(0, paso);
-    if (teclas["ArrowLeft"]) mover(-paso, 0);
-    if (teclas["ArrowRight"]) mover(paso, 0);
+    
+    let dx = 0, dy = 0;
+    if (teclas["ArrowUp"]) dy = -paso;
+    if (teclas["ArrowDown"]) dy = paso;
+    if (teclas["ArrowLeft"]) dx = -paso;
+    if (teclas["ArrowRight"]) dx = paso;
+    
+    if (dx !== 0 || dy !== 0) {
+        mover(dx, dy);
+    }
 }, 40);
 
 /* TÁCTIL CONTINUO */
@@ -117,52 +159,45 @@ function mover(dx, dy) {
     const nuevoX = x + dx;
     const nuevoY = y + dy;
 
-    // Verificar límites del laberinto (0-95 para dejar espacio al jugador)
-    if (nuevoX < 0 || nuevoY < 0 || nuevoX > 96 || nuevoY > 96) {
+    // Verificar límites del laberinto
+    if (nuevoX < 0 || nuevoY < 0 || nuevoX > 97 || nuevoY > 97) {
         reinicioPorError();
         return;
     }
 
-    // Verificar colisiones ANTES de mover
-    const colisiona = verificarColision(nuevoX, nuevoY);
-    
-    if (colisiona) {
+    // Verificar colisiones
+    if (hayColision(nuevoX, nuevoY)) {
         reinicioPorError();
         return;
     }
 
-    // Solo mover si no hay colisión
+    // Mover si no hay colisión
     x = nuevoX;
     y = nuevoY;
     actualizarJugador();
 
     // Verificar si llegó a la meta
-    if (puedePasar && colision("#meta")) {
+    if (verificarMeta()) {
         pasarNivel();
     }
 }
 
-// Función mejorada para verificar colisiones
-function verificarColision(posX, posY) {
-    // Simular la posición del jugador
+function hayColision(posX, posY) {
+    // Área del jugador
     const jLeft = posX;
     const jRight = posX + jugadorAncho;
     const jTop = posY;
     const jBottom = posY + jugadorAlto;
 
-    // Verificar colisiones con paredes
+    // Verificar colisiones con todas las paredes del nivel actual
     for (const pared of niveles[nivel]) {
         const pLeft = pared.x;
         const pRight = pared.x + pared.w;
         const pTop = pared.y;
         const pBottom = pared.y + pared.h;
 
-        // Si es pared roja y puedePasar es true, no colisiona
-        if (pared.roja && puedePasar) {
-            continue;
-        }
-
-        // Verificar colisión
+        // Todas las paredes son rojas y deben causar reinicio
+        // (eliminamos la condición de puedePasar ya que todas son rojas)
         if (jLeft < pRight &&
             jRight > pLeft &&
             jTop < pBottom &&
@@ -174,34 +209,59 @@ function verificarColision(posX, posY) {
     return false; // No hay colisión
 }
 
-function colision(selector) {
-    const j = jugador.getBoundingClientRect();
-    const m = meta.getBoundingClientRect();
+function verificarMeta() {
+    const jLeft = x;
+    const jRight = x + jugadorAncho;
+    const jTop = y;
+    const jBottom = y + jugadorAlto;
     
-    return !(j.right < m.left || 
-             j.left > m.right || 
-             j.bottom < m.top || 
-             j.top > m.bottom);
+    // Obtener posición de la meta
+    const metaStyle = window.getComputedStyle(meta);
+    const mLeft = parseFloat(metaStyle.left);
+    const mTop = parseFloat(metaStyle.top);
+    const mWidth = parseFloat(metaStyle.width);
+    const mHeight = parseFloat(metaStyle.height);
+    
+    const mRight = mLeft + mWidth;
+    const mBottom = mTop + mHeight;
+    
+    // Verificar colisión con la meta
+    return !(jRight < mLeft || 
+             jLeft > mRight || 
+             jBottom < mTop || 
+             jTop > mBottom);
 }
 
 function reinicioPorError() {
-    mensaje.textContent = "Haz reiniciado el nivel, no toques las paredes";
+    mensaje.textContent = "¡Tocaste una pared! Reiniciando nivel " + nivel;
     reiniciarJugador();
 }
 
 function pasarNivel() {
     puedePasar = false;
     bloqueado = true;
-    nivel++;
-
-    if (nivel <= 3) {
-        mensaje.textContent = "Pasaste al nivel " + nivel;
-        setTimeout(() => {
-            bloqueado = false;
-            cargarNivel();
-        }, 1200);
-    } else {
-        jumpscare.style.display = "block";
-        video.play();
-    }
+    
+    mensaje.textContent = "¡Nivel " + nivel + " completado!";
+    
+    setTimeout(() => {
+        nivel++;
+        
+        if (nivel <= 3) {
+            mensaje.textContent = "Cargando nivel " + nivel + "...";
+            setTimeout(() => {
+                bloqueado = false;
+                cargarNivel();
+            }, 1000);
+        } else {
+            // Juego completado
+            mensaje.textContent = "¡Juego Completado!";
+            setTimeout(() => {
+                jumpscare.style.display = "block";
+                video.play();
+            }, 1500);
+        }
+    }, 1000);
 }
+
+// Inicializar
+cargarNivel();
