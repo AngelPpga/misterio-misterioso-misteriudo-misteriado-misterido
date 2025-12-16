@@ -17,38 +17,30 @@ let teclas = {};
 let intervalo = null;
 let puedePasar = true;
 
-/* NIVELES (PARED ROJA DEL NIVEL 1 ARREGLADA) */
+// =======================
+// NUEVAS PAREDES POR NIVEL
+// =======================
+
 const levels = {
     1: [
-        { x: 50, y: 0, w: 20, h: 300 },
-        { x: 120, y: 100, w: 200, h: 20 },
-        { x: 280, y: 200, w: 20, h: 200 },
-
-        { x: 20, y: 0, w: 5, h: 70 },
-        { x: 40, y: 30, w: 40, h: 5 }
+        { x: 40,  y: 0,   w: 20, h: 260 },   // pared vertical izquierda
+        { x: 120, y: 120, w: 160, h: 20 },   // pared horizontal centro
+        { x: 260, y: 160, w: 20,  h: 140 }   // pared vertical derecha
     ],
 
     2: [
-        { x: 80, y: 0, w: 20, h: 250 },
-        { x: 160, y: 150, w: 20, h: 250 },
-        { x: 240, y: 0, w: 20, h: 250 },
-        { x: 0, y: 300, w: 300, h: 20 },
-
-        { x: 25, y: 0, w: 5, h: 60 },
-        { x: 50, y: 20, w: 5, h: 80 },
-        { x: 0, y: 70, w: 60, h: 5 }
+        { x: 80,  y: 0,   w: 20, h: 240 },   // izquierda
+        { x: 160, y: 80,  w: 20, h: 240 },   // centro
+        { x: 240, y: 0,   w: 20, h: 240 }    // derecha
     ],
 
     3: [
-        { x: 25, y: 0, w: 5, h: 60 },
-        { x: 50, y: 20, w: 5, h: 80 },
-        { x: 0, y: 70, w: 60, h: 5 },
-
-        { x: 20, y: 0, w: 5, h: 90 },
-        { x: 45, y: 10, w: 5, h: 90 },
-        { x: 70, y: 0, w: 5, h: 90 }
+        { x: 40, y: 20,  w: 20, h: 220 },    // izquierda
+        { x: 140, y: 0,  w: 20, h: 260 },    // centro
+        { x: 240, y: 40, w: 20, h: 220 }     // derecha
     ]
 };
+
 
 
 btnInicio.onclick = () => {
