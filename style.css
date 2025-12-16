@@ -61,28 +61,27 @@ body {
     object-fit: cover;
 }
 
-/* CONTROLES TÁCTILES */
 #controles {
     position: fixed;
-    bottom: 15px;
+    bottom: 0;
     width: 100%;
+    background: rgba(0,0,0,0.6);
+    padding: 20px 0;
     display: none;
+}
+
+#controles .fila {
+    display: flex;
     justify-content: center;
-    gap: 10px;
+    gap: 25px;
 }
 
 #controles button {
-    font-size: 28px;
-    padding: 15px;
-    background: red;
+    width: 80px;
+    height: 80px;
+    font-size: 36px;
+    background: #900;
+    color: white;
     border: none;
-    border-radius: 10px;
-}
-
-@media (max-width: 768px) {
-    #controles {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
+    border-radius: 50%;
 }
