@@ -25,7 +25,7 @@ const niveles = {
     ],
 
     2: [
-        { x: 25, y: 5, w: 6, h: 80, roja: true },     // vertical roja
+        { x: 15, y: 10, w: 6, h: 60, roja: true },     // vertical roja
         { x: 55, y: 15, w: 6, h: 70, roja: false },   // vertical
         { x: 10, y: 70, w: 80, h: 6, roja: true }     // horizontal roja
     ],
