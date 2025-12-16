@@ -17,24 +17,27 @@ let teclas = {};
 let intervalo = null;
 let puedePasar = true;
 
-/* DEFINICIÓN DE NIVELES */
+/* DEFINICIÓN DE NIVELES — TODO DENTRO DEL CUADRO 100×100 */
 const niveles = {
     1: [
-        { x: 20, y: 0, w: 5, h: 70, roja: false },
-        { x: 45, y: 20, w: 5, h: 60, roja: true },
-        { x: 65, y: 40, w: 20, h: 5, roja: false }
+        { x: 15, y: 10, w: 6, h: 60, roja: false },   // vertical
+        { x: 40, y: 30, w: 45, h: 6, roja: true },    // horizontal roja
+        { x: 70, y: 10, w: 6, h: 65, roja: false }    // vertical
     ],
+
     2: [
-        { x: 25, y: 0, w: 5, h: 60, roja: true },
-        { x: 50, y: 20, w: 5, h: 80, roja: false },
-        { x: 0, y: 70, w: 60, h: 5, roja: true }
+        { x: 25, y: 5, w: 6, h: 80, roja: true },     // vertical roja
+        { x: 55, y: 15, w: 6, h: 70, roja: false },   // vertical
+        { x: 10, y: 70, w: 80, h: 6, roja: true }     // horizontal roja
     ],
+
     3: [
-        { x: 20, y: 0, w: 5, h: 90, roja: true },
-        { x: 45, y: 10, w: 5, h: 90, roja: false },
-        { x: 70, y: 0, w: 5, h: 90, roja: true }
+        { x: 20, y: 5, w: 6, h: 90, roja: true },     // vertical roja
+        { x: 47, y: 5, w: 6, h: 90, roja: false },    // vertical
+        { x: 74, y: 5, w: 6, h: 90, roja: true }      // vertical roja
     ]
 };
+
 
 btnInicio.onclick = () => {
     inicio.style.display = "none";
