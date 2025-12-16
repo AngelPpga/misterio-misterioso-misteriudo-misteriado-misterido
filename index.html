@@ -38,6 +38,60 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
+        
+        /* Mensaje del video */
+        #mensaje-video-top {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            text-align: center;
+            padding: 15px 10px;
+            font-size: 16px;
+            font-style: italic;
+            z-index: 40;
+            border-bottom: 2px solid red;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+            animation: fadeInDown 0.8s ease-out;
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Para desktop, hacer el mensaje más pequeño */
+        @media (min-width: 768px) {
+            #mensaje-video-top {
+                font-size: 14px;
+                padding: 10px;
+                max-width: 400px;
+                margin: 20px auto;
+                border-radius: 10px;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: auto;
+                animation: fadeIn 0.8s ease-out;
+            }
+            
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+        }
     </style>
 </head>
 <body>
@@ -74,6 +128,9 @@
     </div>
 
     <div id="jumpscare">
+        <div id="mensaje-video-top" style="display: none;">
+            "Espero que por lo menos una sonrisa te haya sacado"
+        </div>
         <video id="videoFinal" src="piolin.mp4" playsinline loop muted></video>
     </div>
 
@@ -101,6 +158,23 @@
                 }
                 lastTouchEnd = now;
             }, false);
+            
+            // Permitir recarga con pull-to-refresh
+            let touchStartY = 0;
+            let touchEndY = 0;
+            
+            document.addEventListener('touchstart', function(e) {
+                touchStartY = e.touches[0].clientY;
+            }, { passive: true });
+            
+            document.addEventListener('touchend', function(e) {
+                touchEndY = e.changedTouches[0].clientY;
+                
+                // Si el usuario desliza desde el borde superior
+                if (touchStartY < 50 && touchEndY - touchStartY > 100) {
+                    location.reload();
+                }
+            }, { passive: true });
         });
     </script>
 </body>

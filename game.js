@@ -6,6 +6,7 @@ const inicio = document.getElementById("inicio");
 const btnInicio = document.getElementById("btnInicio");
 const jumpscare = document.getElementById("jumpscare");
 const video = document.getElementById("videoFinal");
+const mensajeVideoTop = document.getElementById("mensaje-video-top");
 
 let nivel = 1;
 let bloqueado = true;
@@ -292,6 +293,9 @@ function pasarNivel() {
             // Mostrar pantalla del video
             jumpscare.style.display = "block";
             
+            // Mostrar mensaje especial
+            mensajeVideoTop.style.display = "block";
+            
             // Activar sonido
             video.muted = false;
             video.volume = 1.0;
@@ -478,6 +482,9 @@ function cerrarVideo() {
     video.muted = true;
     videoLoops = 0;
     videoProtegido = true;
+    
+    // Ocultar mensaje del video
+    mensajeVideoTop.style.display = "none";
     
     // Remover botón de salir si existe
     const botonSalir = document.getElementById('boton-salir');
