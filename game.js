@@ -20,7 +20,7 @@ let puedePasar = true;
 let videoLoops = 0;
 let videoProtegido = true;
 
-/* DEFINICIÓN DE NIVELES */
+/* DEFINICIÓN DE NIVELES - NIVEL 3 MÁS DIFÍCIL */
 const niveles = {
     1: [
         { x: 30, y: 20, w: 5, h: 60, roja: true },
@@ -35,9 +35,21 @@ const niveles = {
     ],
 
     3: [
-        { x: 20, y: 20, w: 5, h: 60, roja: true },
-        { x: 50, y: 10, w: 5, h: 60, roja: true },
-        { x: 75, y: 30, w: 5, h: 50, roja: true }
+        // PATRÓN EN ZIGZAG MÁS COMPLEJO
+        // Pared roja 1 - Diagonal principal
+        { x: 20, y: 10, w: 5, h: 80, roja: true },
+        
+        // Pared roja 2 - Diagonal que cruza
+        { x: 50, y: 10, w: 5, h: 80, roja: true },
+        
+        // Pared roja 3 - Horizontal estratégica
+        { x: 75, y: 40, w: 5, h: 50, roja: true },
+        
+        // Pared roja 4 - Bloqueo extra (adicional para mayor dificultad)
+        { x: 40, y: 60, w: 30, h: 5, roja: true },
+        
+        // Pared roja 5 - Pasillo estrecho
+        { x: 65, y: 20, w: 20, h: 5, roja: true }
     ]
 };
 
@@ -69,6 +81,9 @@ function cargarNivel() {
     reposicionarMeta();
     reiniciarJugador();
     mensaje.textContent = `Nivel ${nivel} - ¡Encuentra el camino seguro!`;
+    if (nivel === 3) {
+        mensaje.textContent = `Nivel ${nivel} - ¡Cuidado! Este es el más difícil`;
+    }
     mensaje.style.color = "red";
     mensaje.style.textShadow = "0 0 8px red";
     mensaje.style.animation = "textGlow 2s infinite";
@@ -87,6 +102,7 @@ function reposicionarMeta() {
             meta.style.top = "15%";
             break;
         case 3:
+            // Meta en posición más complicada - esquina superior derecha
             meta.style.left = "92%";
             meta.style.top = "15%";
             break;
@@ -104,8 +120,9 @@ function reiniciarJugador() {
             y = 90;
             break;
         case 3:
+            // Posición inicial más alejada de la meta
             x = 5;
-            y = 90;
+            y = 85;
             break;
     }
     actualizarJugador();
