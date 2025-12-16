@@ -107,17 +107,8 @@ function actualizarJugador() {
 }
 
 /* TECLADO */
-document.addEventListener("keydown", e => {
-    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-        teclas[e.key] = true;
-    }
-});
-
-document.addEventListener("keyup", e => {
-    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-        teclas[e.key] = false;
-    }
-});
+document.addEventListener("keydown", e => teclas[e.key] = true);
+document.addEventListener("keyup", e => teclas[e.key] = false);
 
 setInterval(() => {
     if (bloqueado) return;
@@ -151,29 +142,29 @@ function detener() {
 
 /* MOVIMIENTO */
 function mover(dx, dy) {
-    const nuevoX = x + dx;
-    const nuevoY = y + dy;
+    x += dx;
+    y += dy;
 
-    if (nuevoX < 0 || nuevoY < 0 || nuevoX > 95 || nuevoY > 95) {
+    if (x < 0 || y < 0 || x > 95 || y > 95) {
         reinicioPorError();
         return;
     }
 
-    const colisionRoja = hayColision(nuevoX, nuevoY, true);
-    const colisionGris = hayColision(nuevoX, nuevoY, false);
+    actualizarJugador();
+
+    const colisionRoja = hayColision(x, y, true);
+    const colisionGris = hayColision(x, y, false);
     
     if (colisionRoja) {
         reinicioPorError();
-        return;
     }
     
     if (colisionGris) {
-        return;
+        // Solo bloquea movimiento, no reinicia
+        x -= dx;
+        y -= dy;
+        actualizarJugador();
     }
-
-    x = nuevoX;
-    y = nuevoY;
-    actualizarJugador();
 
     if (puedePasar && colision("#meta")) {
         pasarNivel();
@@ -224,63 +215,66 @@ function reinicioPorError() {
 function pasarNivel() {
     puedePasar = false;
     bloqueado = true;
+    
+    // Texto en VERDE cuando pasa de nivel
+    mensaje.style.color = "lime";
+    
     nivel++;
 
     if (nivel <= 3) {
         mensaje.textContent = "Pasaste al nivel " + nivel;
+        
+        // Restaurar color rojo después de 1 segundo
         setTimeout(() => {
+            mensaje.style.color = "red";
             bloqueado = false;
             cargarNivel();
-        }, 1200);
+        }, 1000);
     } else {
-        // Nivel 3 completado - SOLO CAMBIO AQUÍ
-        mensaje.textContent = "Pasaste al nivel " + nivel;
+        // Nivel 3 completado - CAMBIO ESPECÍFICO QUE PEDISTE
+        mensaje.textContent = "Cargando recompensa...";
         
+        // Solo 1 segundo de espera (como pediste)
         setTimeout(() => {
-            mensaje.textContent = "Cargando sorpresa...";
-            
-            setTimeout(() => {
-                jumpscare.style.display = "block";
+            jumpscare.style.display = "block";
+            video.muted = false;
+            video.volume = 1.0;
+            video.play().catch(e => {
+                console.log("Error al reproducir video:", e);
                 video.muted = false;
-                video.volume = 1.0;
-                video.play().catch(e => {
-                    console.log("Error al reproducir video:", e);
-                    mensaje.textContent = "Toca la pantalla para ver el video";
-                    video.onclick = function() {
-                        video.muted = false;
-                        video.play();
-                        mensaje.textContent = "";
-                    };
-                });
-                
-                video.onended = function() {
-                    jumpscare.style.display = "none";
-                    video.currentTime = 0;
-                    video.muted = true;
-                    nivel = 1;
-                    inicio.style.display = "flex";
-                    bloqueado = true;
-                    mensaje.textContent = "¡Juego completado! Presiona 'Comenzar' para jugar otra vez";
-                };
-                
-                video.onclick = function() {
-                    jumpscare.style.display = "none";
-                    video.pause();
-                    video.currentTime = 0;
-                    video.muted = true;
-                    nivel = 1;
-                    inicio.style.display = "flex";
-                    bloqueado = true;
-                    mensaje.textContent = "¡Juego completado! Presiona 'Comenzar' para jugar otra vez";
-                };
-            }, 1000);
-        }, 1500);
+                video.play();
+            });
+            
+            // Cuando termine el video, volver al inicio
+            video.onended = function() {
+                jumpscare.style.display = "none";
+                video.currentTime = 0;
+                video.muted = true;
+                nivel = 1;
+                inicio.style.display = "flex";
+                bloqueado = true;
+                mensaje.textContent = "¡Juego completado! Presiona 'Comenzar' para jugar otra vez";
+                mensaje.style.color = "red"; // Restaurar color
+            };
+            
+            // También permitir reinicio al tocar el video
+            video.onclick = function() {
+                jumpscare.style.display = "none";
+                video.pause();
+                video.currentTime = 0;
+                video.muted = true;
+                nivel = 1;
+                inicio.style.display = "flex";
+                bloqueado = true;
+                mensaje.textContent = "¡Juego completado! Presiona 'Comenzar' para jugar otra vez";
+                mensaje.style.color = "red"; // Restaurar color
+            };
+        }, 1000); // SOLO 1 SEGUNDO (como pediste)
     }
 }
 
+// Inicializar
 video.muted = true;
 video.loop = true;
-video.preload = "auto";
-video.addEventListener('contextmenu', e => e.preventDefault());
 
 mensaje.textContent = "Presiona 'Comenzar Juego' para iniciar";
