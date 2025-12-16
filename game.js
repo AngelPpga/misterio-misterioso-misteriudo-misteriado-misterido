@@ -1,157 +1,133 @@
-const laberinto = document.getElementById("laberinto");
 const jugador = document.getElementById("jugador");
 const meta = document.getElementById("meta");
-const mensaje = document.getElementById("mensaje");
-const inicio = document.getElementById("inicio");
-const btnInicio = document.getElementById("btnInicio");
-const jumpscare = document.getElementById("jumpscare");
-const video = document.getElementById("videoFinal");
+const laberinto = document.getElementById("laberinto");
+const barra = document.getElementById("barra");
 
 let nivel = 1;
-let bloqueado = true;
-let x = 2;
-let y = 2;
-const paso = 1.5;
+let x = 10, y = 10;
+let velocidad = 2;
+let moviendo = {};
+let bloqueado = false;
 
-let teclas = {};
-let intervalo = null;
-
-/* NIVELES */
 const niveles = {
     1: [
-        { x: 20, y: 5, w: 5, h: 70, roja: false },
-        { x: 45, y: 10, w: 5, h: 60, roja: true },
-        { x: 65, y: 40, w: 20, h: 5, roja: false }
+        { x: 30, y: 20, w: 5, h: 60, roja: false },
+        { x: 55, y: 10, w: 5, h: 70, roja: true },
+        { x: 75, y: 20, w: 5, h: 60, roja: false }
     ],
     2: [
-        { x: 25, y: 5, w: 5, h: 65, roja: true },
-        { x: 50, y: 15, w: 5, h: 70, roja: false },
-        { x: 5, y: 70, w: 60, h: 5, roja: true }
+        { x: 20, y: 10, w: 5, h: 80, roja: true },
+        { x: 40, y: 10, w: 5, h: 80, roja: false },
+        { x: 60, y: 10, w: 5, h: 80, roja: true }
     ],
     3: [
-        { x: 22, y: 5, w: 5, h: 85, roja: true },
-        { x: 47, y: 5, w: 5, h: 85, roja: false },
-        { x: 72, y: 5, w: 5, h: 85, roja: true }
+        { x: 25, y: 5, w: 5, h: 85, roja: true },
+        { x: 50, y: 5, w: 5, h: 85, roja: false },
+        { x: 75, y: 5, w: 5, h: 85, roja: true }
     ]
 };
 
-btnInicio.onclick = () => {
-    inicio.style.display = "none";
-    bloqueado = false;
-    cargarNivel();
-};
-
 function cargarNivel() {
-    document.querySelectorAll(".pared, .pared-roja").forEach(p => p.remove());
+    laberinto.querySelectorAll(".pared").forEach(p => p.remove());
+    barra.textContent = `Nivel ${nivel}`;
+    x = 10; y = 10;
+    actualizarJugador();
 
     niveles[nivel].forEach(p => {
-        const pared = document.createElement("div");
-        pared.className = p.roja ? "pared-roja" : "pared";
-        Object.assign(pared.style, {
-            left: p.x + "%",
-            top: p.y + "%",
-            width: p.w + "%",
-            height: p.h + "%"
-        });
-        laberinto.appendChild(pared);
+        const d = document.createElement("div");
+        d.className = "pared" + (p.roja ? " roja" : "");
+        d.style.left = p.x + "%";
+        d.style.top = p.y + "%";
+        d.style.width = p.w + "%";
+        d.style.height = p.h + "%";
+        laberinto.appendChild(d);
     });
-
-    reiniciarJugador();
-    mensaje.textContent = `💀 Nivel ${nivel}`;
-}
-
-function reiniciarJugador() {
-    x = 2;
-    y = 2;
-    actualizarJugador();
 }
 
 function actualizarJugador() {
-    jugador.style.left = x + "%";
-    jugador.style.top = y + "%";
+    jugador.style.left = x + "px";
+    jugador.style.top = y + "px";
 }
 
-/* TECLADO */
-document.addEventListener("keydown", e => teclas[e.key] = true);
-document.addEventListener("keyup", e => teclas[e.key] = false);
+function colision(a, b) {
+    return !(
+        a.right < b.left ||
+        a.left > b.right ||
+        a.bottom < b.top ||
+        a.top > b.bottom
+    );
+}
+
+function rect(el) {
+    return el.getBoundingClientRect();
+}
+
+function reiniciar() {
+    x = 10; y = 10;
+    actualizarJugador();
+}
+
+function avanzarNivel() {
+    if (bloqueado) return;
+    bloqueado = true;
+
+    if (nivel < 3) {
+        nivel++;
+        cargarNivel();
+    } else {
+        document.getElementById("juego").classList.add("oculto");
+        document.getElementById("final").classList.remove("oculto");
+    }
+
+    setTimeout(() => bloqueado = false, 1000);
+}
 
 setInterval(() => {
-    if (bloqueado) return;
-    if (teclas["ArrowUp"]) mover(0, -paso);
-    if (teclas["ArrowDown"]) mover(0, paso);
-    if (teclas["ArrowLeft"]) mover(-paso, 0);
-    if (teclas["ArrowRight"]) mover(paso, 0);
-}, 40);
-
-/* TÁCTIL CONTINUO */
-document.querySelectorAll("#controles button").forEach(btn => {
-    btn.addEventListener("pointerdown", e => {
-        e.preventDefault();
-        const dir = btn.dataset.dir;
-        intervalo = setInterval(() => {
-            if (dir === "up") mover(0, -paso);
-            if (dir === "down") mover(0, paso);
-            if (dir === "left") mover(-paso, 0);
-            if (dir === "right") mover(paso, 0);
-        }, 40);
-    });
-
-    btn.addEventListener("pointerup", detener);
-    btn.addEventListener("pointerleave", detener);
-});
-
-function detener() {
-    clearInterval(intervalo);
-    intervalo = null;
-}
-
-/* MOVIMIENTO */
-function mover(dx, dy) {
-    x += dx;
-    y += dy;
-
-    if (x < 0 || y < 0 || x > 95 || y > 95) {
-        reinicio();
-        return;
-    }
+    if (moviendo.up) y -= velocidad;
+    if (moviendo.down) y += velocidad;
+    if (moviendo.left) x -= velocidad;
+    if (moviendo.right) x += velocidad;
 
     actualizarJugador();
 
-    if (colision(".pared") || colision(".pared-roja")) {
-        reinicio();
-    }
-
-    if (colision("#meta")) pasarNivel();
-}
-
-function reinicio() {
-    mensaje.textContent = "💀 Has reiniciado el nivel, no toques las paredes";
-    reiniciarJugador();
-}
-
-function colision(selector) {
-    const j = jugador.getBoundingClientRect();
-    return [...document.querySelectorAll(selector)].some(el => {
-        const r = el.getBoundingClientRect();
-        return j.left < r.right &&
-               j.right > r.left &&
-               j.top < r.bottom &&
-               j.bottom > r.top;
+    laberinto.querySelectorAll(".pared").forEach(p => {
+        if (colision(rect(jugador), rect(p))) {
+            if (p.classList.contains("roja")) reiniciar();
+            else reiniciar();
+        }
     });
-}
 
-function pasarNivel() {
-    bloqueado = true;
-    nivel++;
-
-    if (nivel <= 3) {
-        mensaje.textContent = `💀 Pasaste al nivel ${nivel}`;
-        setTimeout(() => {
-            bloqueado = false;
-            cargarNivel();
-        }, 1200);
-    } else {
-        jumpscare.style.display = "block";
-        video.play();
+    if (colision(rect(jugador), rect(meta))) {
+        avanzarNivel();
     }
-}
+}, 16);
+
+/* CONTROLES */
+document.querySelectorAll(".btn").forEach(btn => {
+    const d = btn.dataset.dir;
+    btn.addEventListener("touchstart", e => { e.preventDefault(); moviendo[d] = true; });
+    btn.addEventListener("touchend", () => moviendo[d] = false);
+    btn.addEventListener("mousedown", () => moviendo[d] = true);
+    btn.addEventListener("mouseup", () => moviendo[d] = false);
+});
+
+/* TECLADO */
+window.addEventListener("keydown", e => {
+    if (e.key === "ArrowUp") moviendo.up = true;
+    if (e.key === "ArrowDown") moviendo.down = true;
+    if (e.key === "ArrowLeft") moviendo.left = true;
+    if (e.key === "ArrowRight") moviendo.right = true;
+});
+window.addEventListener("keyup", e => {
+    if (e.key === "ArrowUp") moviendo.up = false;
+    if (e.key === "ArrowDown") moviendo.down = false;
+    if (e.key === "ArrowLeft") moviendo.left = false;
+    if (e.key === "ArrowRight") moviendo.right = false;
+});
+
+/* INICIO */
+document.getElementById("btnIniciar").onclick = () => {
+    document.getElementById("bienvenida").classList.add("oculto");
+    document.getElementById("juego").classList.remove("oculto");
+    cargarNivel();
+};

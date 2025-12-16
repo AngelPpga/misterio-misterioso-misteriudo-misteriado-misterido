@@ -2,48 +2,45 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Laberinto del Terror</title>
+    <title>Anchetudaaa</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Favicon calavera -->
+    <link rel="icon" type="image/svg+xml"
+          href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>💀</text></svg>">
+
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-
-<!-- PANTALLA DE INICIO -->
-<div id="inicio">
+<div id="bienvenida">
     <h1>💀 Bienvenides 💀</h1>
-    <p>
-        Completa los <strong>3 niveles</strong><br>
-        y participa en la rifa de una ancheta 🎁
-    </p>
-    <button id="btnInicio">COMENZAR</button>
+    <p>Completa los <b>3 niveles</b> del laberinto<br>
+       y participa en la rifa de una <b>ancheta 🎁</b></p>
+    <button id="btnIniciar">COMENZAR</button>
 </div>
 
-<!-- HUD -->
-<div id="hud">
-    <span id="mensaje"></span>
-</div>
-
-<!-- JUEGO -->
-<div id="contenedor">
+<div id="juego" class="oculto">
+    <div id="barra">Nivel 1</div>
     <div id="laberinto">
         <div id="jugador"></div>
         <div id="meta"></div>
     </div>
-</div>
 
-<!-- CONTROLES MÓVIL -->
-<div id="controles">
-    <button data-dir="up">▲</button>
-    <div class="fila">
-        <button data-dir="left">◀</button>
-        <button data-dir="down">▼</button>
-        <button data-dir="right">▶</button>
+    <div id="controles">
+        <button class="btn" data-dir="up">💀</button>
+        <div>
+            <button class="btn" data-dir="left">⬅</button>
+            <button class="btn" data-dir="down">⬇</button>
+            <button class="btn" data-dir="right">➡</button>
+        </div>
     </div>
 </div>
 
-<!-- FINAL -->
-<div id="jumpscare">
-    <video id="videoFinal" src="piolin.mp4" loop playsinline></video>
+<div id="final" class="oculto">
+    <video id="videoFinal" autoplay muted loop playsinline>
+        <source src="piolin.mp4" type="video/mp4">
+    </video>
 </div>
 
 <script src="game.js"></script>
