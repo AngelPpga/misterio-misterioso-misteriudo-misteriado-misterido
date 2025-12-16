@@ -22,7 +22,7 @@ body {
     align-items: center;
     justify-content: space-between;
     min-height: 100vh;
-    padding: 10px 10px 0 10px; /* Reducido padding inferior a 0 */
+    padding: 10px 10px 5px 10px;
     position: fixed;
     top: 0;
     left: 0;
@@ -82,7 +82,7 @@ body {
     background: rgba(0, 0, 0, 0.9);
     border: 2px solid red;
     border-radius: 10px;
-    margin-bottom: 5px; /* Reducido de 10px */
+    margin-bottom: 5px; /* Reducido */
     text-align: center;
     width: 90%;
     max-width: 420px;
@@ -110,11 +110,10 @@ body {
 #contenedor {
     display: flex;
     justify-content: center;
-    padding: 5px;
-    flex: 1;
+    padding: 0; /* Eliminado padding */
+    flex: 0 1 auto; /* No ocupar espacio extra */
     align-items: center;
-    min-height: 0;
-    margin-bottom: 0; /* Reducido a 0 */
+    margin: 0; /* Sin margen */
 }
 
 #laberinto {
@@ -188,14 +187,14 @@ body {
     box-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
 }
 
-/* CONTROLES - SUBIDOS Y MÁS CERCANOS AL LABERINTO */
+/* CONTROLES */
 #controles {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 5px; /* Reducido de 8px */
-    padding: 5px; 
-    margin: 0; /* Sin margen */
+    gap: 8px;
+    padding: 5px;
+    margin: 15px 0 10px 0; /* Más margen superior para acercar al laberinto */
     flex-shrink: 0;
 }
 
@@ -245,24 +244,25 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center; /* Cambiado de space-between a center */
     height: 100vh;
     width: 100%;
     max-width: 500px;
     margin: 0 auto;
-    padding-bottom: env(safe-area-inset-bottom, 5px); /* Solo padding para safe area */
+    gap: 10px; /* Espacio uniforme entre elementos */
 }
 
-/* 📱 MOBILE - MEJORADO */
+/* 📱 MOBILE - COMPACTADO */
 @media (max-width: 600px) {
     body {
-        padding: 5px 5px 0 5px; /* Sin padding inferior */
+        padding: 5px 5px 5px 5px; /* Padding uniforme */
     }
     
     #game-container {
-        padding: 0 5px env(safe-area-inset-bottom, 5px) 5px; /* Solo safe area abajo */
+        padding: 0;
         height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-        justify-content: flex-start; 
+        justify-content: center; /* Centrado vertical */
+        gap: 5px; /* Espacio compacto entre elementos */
     }
     
     #inicio h1 {
@@ -276,26 +276,27 @@ body {
 
     #hud {
         font-size: 18px;
-        padding: 10px 15px;
-        margin-bottom: 3px; /* Muy reducido */
+        padding: 8px 12px; /* Más compacto */
+        margin-bottom: 5px; /* Menos espacio debajo */
         max-width: 350px;
-        margin-top: env(safe-area-inset-top, 0px);
+        margin-top: env(safe-area-inset-top, 5px);
     }
     
     #laberinto {
         width: min(90vw, 340px);
         height: min(90vw, 340px);
-        margin: 2px 0; /* Reducido margen */
+        margin: 0; /* Sin margen */
     }
     
     #contenedor {
-        margin-bottom: -5px; /* Espacio negativo para acercar controles */
+        margin: 0; /* Sin margen */
+        padding: 0; /* Sin padding */
     }
     
     #controles {
-        margin: 0;
-        padding: 3px;
-        gap: 3px;
+        margin: 10px 0 0 0; /* Más margen superior para acercar al laberinto */
+        padding: 5px;
+        gap: 8px;
     }
     
     #controles button {
@@ -317,8 +318,7 @@ body {
     }
     
     #controles {
-        margin: 0;
-        padding: 5px;
+        margin: 20px 0 10px 0; /* Más margen superior */
     }
     
     #controles button {
@@ -327,28 +327,24 @@ body {
     }
 }
 
-/* Dispositivos muy pequeños (iPhone SE, etc.) */
+/* Dispositivos muy pequeños (iPhone SE, etc.) - MÁS COMPACTO */
 @media (max-height: 700px) and (max-width: 600px) {
     #hud {
         font-size: 16px;
-        padding: 8px 12px;
-        margin-bottom: 2px; /* Mínimo margen */
+        padding: 6px 10px; /* Más compacto */
+        margin-bottom: 3px; /* Mínimo espacio */
     }
     
     #laberinto {
         width: min(85vw, 320px);
         height: min(85vw, 320px);
-        margin: 1px 0; /* Mínimo margen */
-    }
-    
-    #contenedor {
-        margin-bottom: -8px; /* Más espacio negativo para dispositivos pequeños */
+        margin: 0;
     }
     
     #controles {
-        margin: 0;
-        padding: 2px;
-        gap: 2px;
+        margin: 8px 0 0 0; /* Margen superior más pequeño */
+        padding: 3px;
+        gap: 5px;
     }
     
     #controles button {
@@ -362,13 +358,35 @@ body {
     }
 }
 
-/* Para pantallas muy altas, mantener flechas cerca */
-@media (min-height: 800px) and (max-width: 600px) {
-    #contenedor {
-        margin-bottom: -15px; /* Más espacio negativo en pantallas altas */
+/* Ajuste adicional para pantallas muy cortas */
+@media (max-height: 600px) {
+    #game-container {
+        gap: 3px; /* Espacio mínimo entre elementos */
+    }
+    
+    #hud {
+        padding: 4px 8px;
+        margin-bottom: 2px;
+        font-size: 14px;
+    }
+    
+    #laberinto {
+        width: min(80vw, 300px);
+        height: min(80vw, 300px);
     }
     
     #controles {
-        margin-top: -10px; /* Subir aún más los controles */
+        margin: 5px 0 0 0;
+    }
+}
+
+/* Para pantallas muy altas, mantener compacto */
+@media (min-height: 800px) and (max-width: 600px) {
+    #game-container {
+        gap: 15px; /* Un poco más de espacio en pantallas altas */
+    }
+    
+    #controles {
+        margin: 15px 0 0 0;
     }
 }
