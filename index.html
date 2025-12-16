@@ -16,12 +16,22 @@
         .pared-roja { background: red !important; border: 1px solid darkred !important; }
         .pared-gris { background: #444 !important; border: 1px solid #666 !important; }
         #jugador { transition: left 0.1s ease, top 0.1s ease !important; }
-        html, body { overflow: hidden; height: 100%; touch-action: none; -webkit-tap-highlight-color: transparent; }
-        #boton-salir { font-weight: bold; letter-spacing: 0.5px; }
+        html, body { 
+            overflow: hidden; 
+            height: 100%; 
+            touch-action: none; 
+            -webkit-tap-highlight-color: transparent;
+        }
         
-        /* Prevenir zoom y selección */
-        * { -webkit-touch-callout: none; -webkit-user-drag: none; }
-        input, textarea { -webkit-user-select: text; }
+        /* Asegurar que los controles estén arriba en móvil */
+        @media (max-width: 600px) {
+            #game-container {
+                padding-top: env(safe-area-inset-top);
+            }
+            #controles {
+                margin-top: auto; /* Empuja controles hacia arriba */
+            }
+        }
     </style>
 </head>
 <body>
@@ -29,14 +39,15 @@
         <div id="inicio">
             <h1>💀 ¡Bienvenides! 💀</h1>
             <p>
-                Completa los <strong style="color: white;">3 niveles</strong><br>
-                <strong style="color: yellow;">Gana la ancheta 🎁</strong>
+                Completa los <strong style="color: white;">3 niveles</strong>  
+                <br>
+                y participa en la rifa de una <strong style="color: yellow;">ancheta 🎁</strong>
             </p>
-            <button id="btnInicio">Comenzar</button>
+            <button id="btnInicio">Comenzar Juego</button>
         </div>
 
         <div id="hud">
-            <span id="mensaje">Presiona "Comenzar"</span>
+            <span id="mensaje">Presiona "Comenzar Juego" para iniciar</span>
         </div>
 
         <div id="contenedor">
@@ -63,28 +74,59 @@
     <script src="game.js"></script>
 
     <script>
-        // Prevenir comportamientos no deseados en móvil
+        // Script para optimizar posición en iOS
         document.addEventListener('DOMContentLoaded', function() {
+            // Ajustar posición en iOS
+            if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
+                const gameContainer = document.getElementById('game-container');
+                const controls = document.getElementById('controles');
+                
+                // Ajustar después de un breve delay
+                setTimeout(() => {
+                    // Hacer el laberinto más pequeño para dar espacio a controles
+                    const laberinto = document.getElementById('laberinto');
+                    laberinto.style.width = 'min(85vw, 300px)';
+                    laberinto.style.height = 'min(85vw, 300px)';
+                    
+                    // Mover controles más arriba
+                    controls.style.marginTop = '10px';
+                    controls.style.marginBottom = '5px';
+                    
+                    // Reducir espacio del contenedor
+                    const contenedor = document.getElementById('contenedor');
+                    contenedor.style.maxHeight = '40vh';
+                }, 100);
+            }
+            
             // Prevenir zoom
             document.addEventListener('gesturestart', function(e) {
                 e.preventDefault();
             });
             
             // Prevenir pull-to-refresh
-            document.addEventListener('touchmove', function(e) {
-                if (e.touches.length > 1) e.preventDefault();
-            }, { passive: false });
+            let lastTouchY = 0;
+            document.addEventListener('touchstart', function(e) {
+                if (e.touches.length === 1) {
+                    lastTouchY = e.touches[0].clientY;
+                }
+            }, { passive: true });
             
-            // Optimizar para iOS
-            if (/(iPad|iPhone|iPod)/g.test(navigator.userAgent)) {
-                document.body.style.cursor = 'pointer';
-            }
+            document.addEventListener('touchmove', function(e) {
+                if (e.touches.length === 1) {
+                    const touchY = e.touches[0].clientY;
+                    const touchDeltaY = touchY - lastTouchY;
+                    
+                    // Si el usuario está deslizando hacia abajo desde la parte superior
+                    if (touchDeltaY > 0 && window.scrollY === 0) {
+                        e.preventDefault();
+                    }
+                }
+            }, { passive: false });
         });
         
-        // Prevenir menú contextual largo en iOS
-        window.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-            return false;
+        // Forzar layout para evitar problemas de renderizado
+        window.addEventListener('load', function() {
+            document.body.style.visibility = 'visible';
         });
     </script>
 </body>
