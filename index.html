@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Anchetudaaaaa 💀</title>
+    <title>Anchetudaaaaa</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
     <link rel="icon" type="image/svg+xml"
@@ -129,7 +129,7 @@
 
     <div id="jumpscare">
         <div id="mensaje-video-top" style="display: none;">
-            "Espero que por lo menos una sonrisa te haya sacado"
+            Espero que por lo menos una sonrisa te haya sacado. Es una disculpa sincera.
         </div>
         <video id="videoFinal" src="piolin.mp4" playsinline loop muted></video>
     </div>
@@ -159,21 +159,67 @@
                 lastTouchEnd = now;
             }, false);
             
-            // Permitir recarga con pull-to-refresh
-            let touchStartY = 0;
-            let touchEndY = 0;
+            // Implementación mejorada de pull-to-refresh
+            let startY = 0;
+            let currentY = 0;
+            let isRefreshing = false;
             
             document.addEventListener('touchstart', function(e) {
-                touchStartY = e.touches[0].clientY;
+                // Solo permitir pull-to-refresh desde el borde superior
+                if (window.scrollY === 0) {
+                    startY = e.touches[0].pageY;
+                }
             }, { passive: true });
             
-            document.addEventListener('touchend', function(e) {
-                touchEndY = e.changedTouches[0].clientY;
+            document.addEventListener('touchmove', function(e) {
+                if (!startY) return;
                 
-                // Si el usuario desliza desde el borde superior
-                if (touchStartY < 50 && touchEndY - touchStartY > 100) {
+                currentY = e.touches[0].pageY;
+                const distance = currentY - startY;
+                
+                // Permitir pull-to-refresh solo si estamos en la parte superior
+                if (window.scrollY === 0 && distance > 0) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+            
+            document.addEventListener('touchend', function(e) {
+                if (!startY) return;
+                
+                const distance = currentY - startY;
+                
+                // Si el usuario deslizó hacia abajo más de 100px desde el borde superior
+                if (distance > 100 && window.scrollY === 0 && !isRefreshing) {
+                    isRefreshing = true;
+                    
+                    // Pequeño feedback visual
+                    document.body.style.opacity = '0.7';
+                    
+                    // Recargar la página
+                    setTimeout(function() {
+                        location.reload();
+                    }, 300);
+                }
+                
+                // Resetear variables
+                startY = 0;
+                currentY = 0;
+            }, { passive: true });
+            
+            // También permitir recarga con doble toque en el HUD
+            const hud = document.getElementById('hud');
+            let lastTap = 0;
+            
+            hud.addEventListener('touchend', function(e) {
+                const currentTime = new Date().getTime();
+                const tapLength = currentTime - lastTap;
+                
+                if (tapLength < 300 && tapLength > 0) {
+                    // Doble toque detectado - recargar
                     location.reload();
                 }
+                
+                lastTap = currentTime;
             }, { passive: true });
         });
     </script>
