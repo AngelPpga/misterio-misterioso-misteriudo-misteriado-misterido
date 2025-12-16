@@ -21,7 +21,7 @@ let puedePasar = true;
 const niveles = {
     1: [
         { x: 15, y: 10, w: 6, h: 60, roja: false },   // vertical
-        { x: 60, y: 50, w: 45, h: 6, roja: true },    // horizontal roja
+        { x: 50, y: 40, w: 45, h: 6, roja: true },    // horizontal roja
         { x: 70, y: 10, w: 6, h: 65, roja: false }    // vertical
     ],
 
