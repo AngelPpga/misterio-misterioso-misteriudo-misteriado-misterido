@@ -20,24 +20,67 @@ let puedePasar = true;
 let videoLoops = 0; // Contador de loops del video
 let videoProtegido = true; // Protección contra clicks accidentales
 
-/* DEFINICIÓN DE NIVELES */
+/* DEFINICIÓN DE NIVELES MEJORADOS - DIFICULTAD MEDIA */
 const niveles = {
     1: [
-        { x: 40, y: 20, w: 5, h: 60, roja: true },
-        { x: 20, y: 30, w: 15, h: 5, roja: false },
-        { x: 65, y: 60, w: 15, h: 5, roja: false }
+        // Laberinto en forma de U con paredes rojas estratégicas
+        { x: 10, y: 10, w: 80, h: 5, roja: true },
+        { x: 10, y: 10, w: 5, h: 80, roja: true },
+        { x: 85, y: 10, w: 5, h: 80, roja: true },
+        { x: 10, y: 85, w: 80, h: 5, roja: true },
+        // Barreras internas
+        { x: 30, y: 20, w: 40, h: 5, roja: false },
+        { x: 20, y: 40, w: 5, h: 30, roja: false },
+        { x: 60, y: 50, w: 20, h: 5, roja: false },
+        { x: 75, y: 30, w: 5, h: 25, roja: false }
     ],
 
     2: [
-        { x: 30, y: 25, w: 5, h: 50, roja: true },
-        { x: 60, y: 25, w: 5, h: 50, roja: true },
-        { x: 45, y: 40, w: 10, h: 5, roja: false }
+        // Laberinto con múltiples caminos y pasillos estrechos
+        { x: 0, y: 0, w: 100, h: 5, roja: true },
+        { x: 0, y: 0, w: 5, h: 100, roja: true },
+        { x: 95, y: 0, w: 5, h: 100, roja: true },
+        { x: 0, y: 95, w: 100, h: 5, roja: true },
+        // Laberinto interno - patrón en zigzag
+        { x: 20, y: 15, w: 60, h: 5, roja: false },
+        { x: 20, y: 15, w: 5, h: 30, roja: false },
+        { x: 75, y: 15, w: 5, h: 30, roja: false },
+        { x: 20, y: 40, w: 60, h: 5, roja: false },
+        { x: 20, y: 40, w: 5, h: 30, roja: false },
+        { x: 75, y: 40, w: 5, h: 30, roja: false },
+        { x: 20, y: 65, w: 60, h: 5, roja: false },
+        // Paredes rojas internas que bloquean caminos directos
+        { x: 45, y: 25, w: 5, h: 15, roja: true },
+        { x: 50, y: 50, w: 5, h: 15, roja: true },
+        { x: 40, y: 70, w: 20, h: 5, roja: true }
     ],
 
     3: [
-        { x: 25, y: 20, w: 5, h: 70, roja: true },
-        { x: 50, y: 10, w: 5, h: 70, roja: true },
-        { x: 75, y: 20, w: 5, h: 70, roja: true }
+        // Laberinto complejo tipo espiral/maze
+        { x: 10, y: 10, w: 80, h: 5, roja: true },
+        { x: 10, y: 10, w: 5, h: 80, roja: true },
+        { x: 85, y: 10, w: 5, h: 80, roja: true },
+        { x: 10, y: 85, w: 80, h: 5, roja: true },
+        // Espiral interna
+        { x: 20, y: 20, w: 60, h: 5, roja: false },
+        { x: 20, y: 20, w: 5, h: 60, roja: false },
+        { x: 75, y: 20, w: 5, h: 60, roja: false },
+        { x: 20, y: 75, w: 60, h: 5, roja: false },
+        // Segunda capa
+        { x: 30, y: 30, w: 40, h: 5, roja: false },
+        { x: 30, y: 30, w: 5, h: 40, roja: false },
+        { x: 65, y: 30, w: 5, h: 40, roja: false },
+        { x: 30, y: 65, w: 40, h: 5, roja: false },
+        // Tercera capa con trampas
+        { x: 40, y: 40, w: 20, h: 5, roja: true },
+        { x: 40, y: 40, w: 5, h: 20, roja: true },
+        { x: 55, y: 40, w: 5, h: 20, roja: true },
+        { x: 40, y: 55, w: 20, h: 5, roja: true },
+        // Paredes estratégicas para crear laberinto
+        { x: 15, y: 50, w: 10, h: 5, roja: false },
+        { x: 50, y: 15, w: 5, h: 10, roja: false },
+        { x: 80, y: 60, w: 10, h: 5, roja: false },
+        { x: 60, y: 80, w: 5, h: 10, roja: false }
     ]
 };
 
@@ -68,7 +111,7 @@ function cargarNivel() {
 
     reposicionarMeta();
     reiniciarJugador();
-    mensaje.textContent = `Nivel ${nivel} - Escapa del laberinto!`;
+    mensaje.textContent = `Nivel ${nivel} - ¡Cuidado con las paredes rojas!`;
     // Restaurar estilo rojo normal
     mensaje.style.color = "red";
     mensaje.style.textShadow = "0 0 8px red";
@@ -80,23 +123,39 @@ function cargarNivel() {
 function reposicionarMeta() {
     switch(nivel) {
         case 1:
+            // Meta en esquina superior derecha, pasando por laberinto
             meta.style.left = "90%";
-            meta.style.top = "90%";
+            meta.style.top = "15%";
             break;
         case 2:
-            meta.style.left = "85%";
-            meta.style.top = "50%";
+            // Meta en centro inferior, con camino complicado
+            meta.style.left = "50%";
+            meta.style.top = "85%";
             break;
         case 3:
-            meta.style.left = "92%";
-            meta.style.top = "15%";
+            // Meta en centro exacto del laberinto espiral
+            meta.style.left = "48%";
+            meta.style.top = "48%";
             break;
     }
 }
 
 function reiniciarJugador() {
-    x = 2;
-    y = 2;
+    // Posiciones iniciales diferentes por nivel
+    switch(nivel) {
+        case 1:
+            x = 15;
+            y = 15;
+            break;
+        case 2:
+            x = 15;
+            y = 90;
+            break;
+        case 3:
+            x = 15;
+            y = 90;
+            break;
+    }
     actualizarJugador();
 }
 
