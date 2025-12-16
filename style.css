@@ -95,7 +95,7 @@ body {
     background: #900;
     color: white;
 
-    /* 🔒 EVITAR COPIAR TEXTO */
+    /* NO COPIABLE */
     user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
@@ -122,9 +122,8 @@ body {
     object-fit: contain;
 }
 
-/* 📱 AJUSTES SOLO PARA CELULAR */
+/* AJUSTES CELULAR */
 @media (max-width: 600px) {
-
     body {
         padding-top: 80px;
     }

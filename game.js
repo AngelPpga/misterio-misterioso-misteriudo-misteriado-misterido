@@ -20,9 +20,9 @@ let ultimoPasoMeta = 0;
 /* DEFINICIÓN DE NIVELES */
 const niveles = {
     1: [
-        { x: 30, y: 0, w: 5, h: 70, roja: false },
-        { x: 55, y: 20, w: 5, h: 50, roja: true },
-        { x: 70, y: 40, w: 25, h: 5, roja: false }
+        { x: 35, y: 0, w: 5, h: 70, roja: false },
+        { x: 70, y: 20, w: 5, h: 50, roja: true },   // ← AQUÍ ESTÁ LA ROJA, LEJOS DEL SPAWN
+        { x: 55, y: 45, w: 25, h: 5, roja: false }
     ],
     2: [
         { x: 30, y: 0, w: 5, h: 60, roja: true },
@@ -84,7 +84,7 @@ setInterval(() => {
     if (teclas["ArrowRight"]) mover(paso, 0);
 }, 40);
 
-/* TÁCTIL CONTINUO */
+/* TÁCTIL */
 document.querySelectorAll("#controles button").forEach(btn => {
     btn.addEventListener("pointerdown", e => {
         e.preventDefault();
@@ -106,7 +106,7 @@ function detener() {
     intervalo = null;
 }
 
-/* MOVIMIENTO Y COLISIONES */
+/* MOVIMIENTO */
 function mover(dx, dy) {
     x += dx;
     y += dy;
