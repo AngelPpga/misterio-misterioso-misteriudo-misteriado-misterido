@@ -20,67 +20,31 @@ let puedePasar = true;
 let videoLoops = 0; // Contador de loops del video
 let videoProtegido = true; // Protección contra clicks accidentales
 
-/* DEFINICIÓN DE NIVELES MEJORADOS - DIFICULTAD MEDIA */
+/* DEFINICIÓN DE NIVELES ESTRATÉGICOS - 3 PAREDES POR NIVEL */
 const niveles = {
-    1: [
-        // Laberinto en forma de U con paredes rojas estratégicas
-        { x: 10, y: 10, w: 80, h: 5, roja: true },
-        { x: 10, y: 10, w: 5, h: 80, roja: true },
-        { x: 85, y: 10, w: 5, h: 80, roja: true },
-        { x: 10, y: 85, w: 80, h: 5, roja: true },
-        // Barreras internas
-        { x: 30, y: 20, w: 40, h: 5, roja: false },
-        { x: 20, y: 40, w: 5, h: 30, roja: false },
-        { x: 60, y: 50, w: 20, h: 5, roja: false },
-        { x: 75, y: 30, w: 5, h: 25, roja: false }
+    1: [ // 1 roja, 2 grises
+        // Pared roja diagonal que divide el área en dos
+        { x: 30, y: 20, w: 5, h: 60, roja: true },
+        // Pared gris horizontal que bloquea camino directo a meta
+        { x: 20, y: 60, w: 25, h: 5, roja: false },
+        // Pared gris vertical que crea un pasillo indirecto
+        { x: 65, y: 30, w: 5, h: 40, roja: false }
     ],
 
-    2: [
-        // Laberinto con múltiples caminos y pasillos estrechos
-        { x: 0, y: 0, w: 100, h: 5, roja: true },
-        { x: 0, y: 0, w: 5, h: 100, roja: true },
-        { x: 95, y: 0, w: 5, h: 100, roja: true },
-        { x: 0, y: 95, w: 100, h: 5, roja: true },
-        // Laberinto interno - patrón en zigzag
-        { x: 20, y: 15, w: 60, h: 5, roja: false },
-        { x: 20, y: 15, w: 5, h: 30, roja: false },
-        { x: 75, y: 15, w: 5, h: 30, roja: false },
-        { x: 20, y: 40, w: 60, h: 5, roja: false },
-        { x: 20, y: 40, w: 5, h: 30, roja: false },
-        { x: 75, y: 40, w: 5, h: 30, roja: false },
-        { x: 20, y: 65, w: 60, h: 5, roja: false },
-        // Paredes rojas internas que bloquean caminos directos
-        { x: 45, y: 25, w: 5, h: 15, roja: true },
-        { x: 50, y: 50, w: 5, h: 15, roja: true },
-        { x: 40, y: 70, w: 20, h: 5, roja: true }
+    2: [ // 2 rojas, 1 gris
+        // Primera pared roja - diagonal superior izquierda
+        { x: 25, y: 15, w: 5, h: 50, roja: true },
+        // Segunda pared roja - diagonal inferior derecha
+        { x: 60, y: 35, w: 5, h: 50, roja: true },
+        // Pared gris estratégica - fuerza a tomar camino sinuoso
+        { x: 45, y: 45, w: 10, h: 5, roja: false }
     ],
 
-    3: [
-        // Laberinto complejo tipo espiral/maze
-        { x: 10, y: 10, w: 80, h: 5, roja: true },
-        { x: 10, y: 10, w: 5, h: 80, roja: true },
-        { x: 85, y: 10, w: 5, h: 80, roja: true },
-        { x: 10, y: 85, w: 80, h: 5, roja: true },
-        // Espiral interna
-        { x: 20, y: 20, w: 60, h: 5, roja: false },
-        { x: 20, y: 20, w: 5, h: 60, roja: false },
-        { x: 75, y: 20, w: 5, h: 60, roja: false },
-        { x: 20, y: 75, w: 60, h: 5, roja: false },
-        // Segunda capa
-        { x: 30, y: 30, w: 40, h: 5, roja: false },
-        { x: 30, y: 30, w: 5, h: 40, roja: false },
-        { x: 65, y: 30, w: 5, h: 40, roja: false },
-        { x: 30, y: 65, w: 40, h: 5, roja: false },
-        // Tercera capa con trampas
-        { x: 40, y: 40, w: 20, h: 5, roja: true },
-        { x: 40, y: 40, w: 5, h: 20, roja: true },
-        { x: 55, y: 40, w: 5, h: 20, roja: true },
-        { x: 40, y: 55, w: 20, h: 5, roja: true },
-        // Paredes estratégicas para crear laberinto
-        { x: 15, y: 50, w: 10, h: 5, roja: false },
-        { x: 50, y: 15, w: 5, h: 10, roja: false },
-        { x: 80, y: 60, w: 10, h: 5, roja: false },
-        { x: 60, y: 80, w: 5, h: 10, roja: false }
+    3: [ // 3 rojas
+        // Tres paredes rojas que forman un triángulo de peligro
+        { x: 20, y: 20, w: 5, h: 60, roja: true },
+        { x: 50, y: 10, w: 5, h: 60, roja: true },
+        { x: 75, y: 30, w: 5, h: 50, roja: true }
     ]
 };
 
@@ -111,7 +75,7 @@ function cargarNivel() {
 
     reposicionarMeta();
     reiniciarJugador();
-    mensaje.textContent = `Nivel ${nivel} - ¡Cuidado con las paredes rojas!`;
+    mensaje.textContent = `Nivel ${nivel} - ¡Encuentra el camino seguro!`;
     // Restaurar estilo rojo normal
     mensaje.style.color = "red";
     mensaje.style.textShadow = "0 0 8px red";
@@ -123,36 +87,35 @@ function cargarNivel() {
 function reposicionarMeta() {
     switch(nivel) {
         case 1:
-            // Meta en esquina superior derecha, pasando por laberinto
+            // Meta en esquina inferior derecha, pasar por pasillo creado por paredes
             meta.style.left = "90%";
-            meta.style.top = "15%";
+            meta.style.top = "90%";
             break;
         case 2:
-            // Meta en centro inferior, con camino complicado
+            // Meta en centro superior, evitar las dos diagonales rojas
             meta.style.left = "50%";
-            meta.style.top = "85%";
+            meta.style.top = "15%";
             break;
         case 3:
-            // Meta en centro exacto del laberinto espiral
-            meta.style.left = "48%";
-            meta.style.top = "48%";
+            // Meta en esquina superior derecha, navegar entre las tres rojas
+            meta.style.left = "92%";
+            meta.style.top = "15%";
             break;
     }
 }
 
 function reiniciarJugador() {
-    // Posiciones iniciales diferentes por nivel
     switch(nivel) {
         case 1:
-            x = 15;
-            y = 15;
+            x = 5;
+            y = 5;
             break;
         case 2:
-            x = 15;
+            x = 5;
             y = 90;
             break;
         case 3:
-            x = 15;
+            x = 5;
             y = 90;
             break;
     }
