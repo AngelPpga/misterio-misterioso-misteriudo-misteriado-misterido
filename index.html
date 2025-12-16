@@ -3,15 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <title>Laberinto del Terror</title>
-
-    <!-- IMPORTANTE PARA MÓVIL -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div id="mensaje">Nivel 1</div>
+<!-- PANTALLA DE BIENVENIDA -->
+<div id="inicio">
+    <h1>¡Bienvenides!</h1>
+    <p>Completa los 3 niveles y participa en la rifa de una ancheta 🎁</p>
+    <button id="btnInicio">Comenzar</button>
+</div>
+
+<div id="mensaje"></div>
 
 <div id="contenedor">
     <div id="laberinto">
@@ -20,7 +24,7 @@
     </div>
 </div>
 
-<!-- CONTROLES TÁCTILES -->
+<!-- CONTROLES -->
 <div id="controles">
     <button data-dir="up">⬆️</button>
     <div class="fila">
@@ -30,7 +34,7 @@
     </div>
 </div>
 
-<!-- VIDEO FINAL (JUMPSCARE) -->
+<!-- VIDEO FINAL -->
 <div id="jumpscare">
     <video id="videoFinal" src="piolin.mp4" playsinline></video>
 </div>

@@ -2,21 +2,24 @@ const laberinto = document.getElementById("laberinto");
 const jugador = document.getElementById("jugador");
 const meta = document.getElementById("meta");
 const mensaje = document.getElementById("mensaje");
+const inicio = document.getElementById("inicio");
+const btnInicio = document.getElementById("btnInicio");
 const jumpscare = document.getElementById("jumpscare");
 const video = document.getElementById("videoFinal");
 
 let nivel = 1;
-let bloqueado = false;
-
+let bloqueado = true;
 let x = 2;
 let y = 2;
-const paso = 3;
+const paso = 1.5;
+let intervalo = null;
 
-/* NIVELES EN PORCENTAJE */
+/* NIVELES */
 const niveles = {
     1: [
         { x: 20, y: 0, w: 5, h: 70 },
-        { x: 40, y: 30, w: 40, h: 5 }
+        { x: 45, y: 20, w: 5, h: 60 },
+        { x: 60, y: 40, w: 20, h: 5 } // pared pequeña nueva
     ],
     2: [
         { x: 25, y: 0, w: 5, h: 60 },
@@ -30,21 +33,25 @@ const niveles = {
     ]
 };
 
-function cargarNivel() {
+btnInicio.onclick = () => {
+    inicio.style.display = "none";
     bloqueado = false;
+    cargarNivel();
+};
 
+function cargarNivel() {
     document.querySelectorAll(".pared").forEach(p => p.remove());
-
     niveles[nivel].forEach(p => {
         const pared = document.createElement("div");
         pared.className = "pared";
-        pared.style.left = p.x + "%";
-        pared.style.top = p.y + "%";
-        pared.style.width = p.w + "%";
-        pared.style.height = p.h + "%";
+        Object.assign(pared.style, {
+            left: p.x + "%",
+            top: p.y + "%",
+            width: p.w + "%",
+            height: p.h + "%"
+        });
         laberinto.appendChild(pared);
     });
-
     x = 2;
     y = 2;
     actualizarJugador();
@@ -56,78 +63,68 @@ function actualizarJugador() {
     jugador.style.top = y + "%";
 }
 
-/* TECLADO */
-document.addEventListener("keydown", e => {
+function mover(dx, dy) {
     if (bloqueado) return;
 
-    if (e.key === "ArrowUp") mover(0, -paso);
-    if (e.key === "ArrowDown") mover(0, paso);
-    if (e.key === "ArrowLeft") mover(-paso, 0);
-    if (e.key === "ArrowRight") mover(paso, 0);
-});
+    x += dx;
+    y += dy;
+    if (x < 0 || y < 0 || x > 95 || y > 95) return;
 
-/* TÁCTIL (MÓVIL) */
-document.querySelectorAll("#controles button").forEach(btn => {
-    btn.addEventListener("pointerdown", e => {
-        e.preventDefault();
-        if (bloqueado) return;
-
-        const dir = btn.dataset.dir;
-        if (dir === "up") mover(0, -paso);
-        if (dir === "down") mover(0, paso);
-        if (dir === "left") mover(-paso, 0);
-        if (dir === "right") mover(paso, 0);
-    });
-});
-
-function mover(dx, dy) {
-    const nx = x + dx;
-    const ny = y + dy;
-
-    if (nx < 0 || ny < 0 || nx > 95 || ny > 95) return;
-
-    x = nx;
-    y = ny;
     actualizarJugador();
 
     if (colision(".pared")) {
-        mensaje.textContent = "💀 Reinicio";
         x = 2;
         y = 2;
         actualizarJugador();
     }
 
-    if (colision("#meta")) {
-        pasarNivel();
-    }
+    if (colision("#meta")) pasarNivel();
+}
+
+/* MOVIMIENTO CONTINUO */
+document.querySelectorAll("#controles button").forEach(btn => {
+    btn.addEventListener("pointerdown", e => {
+        e.preventDefault();
+        if (intervalo) return;
+
+        const dir = btn.dataset.dir;
+        intervalo = setInterval(() => {
+            if (dir === "up") mover(0, -paso);
+            if (dir === "down") mover(0, paso);
+            if (dir === "left") mover(-paso, 0);
+            if (dir === "right") mover(paso, 0);
+        }, 40);
+    });
+
+    btn.addEventListener("pointerup", detener);
+    btn.addEventListener("pointerleave", detener);
+});
+
+function detener() {
+    clearInterval(intervalo);
+    intervalo = null;
 }
 
 function colision(selector) {
     const j = jugador.getBoundingClientRect();
     return [...document.querySelectorAll(selector)].some(el => {
         const r = el.getBoundingClientRect();
-        return j.left < r.right &&
-               j.right > r.left &&
-               j.top < r.bottom &&
-               j.bottom > r.top;
+        return j.left < r.right && j.right > r.left &&
+               j.top < r.bottom && j.bottom > r.top;
     });
 }
 
 function pasarNivel() {
-    if (bloqueado) return;
-
     bloqueado = true;
     nivel++;
-
     if (nivel <= 3) {
         mensaje.textContent = "Nivel superado";
-        setTimeout(cargarNivel, 1200);
+        setTimeout(() => {
+            bloqueado = false;
+            cargarNivel();
+        }, 1000);
     } else {
-        mensaje.textContent = "";
         jumpscare.style.display = "block";
-        video.currentTime = 0;
         video.play();
     }
 }
-
-cargarNivel();
