@@ -22,7 +22,7 @@ body {
     align-items: center;
     justify-content: space-between;
     min-height: 100vh;
-    padding: 10px 10px 5px 10px;
+    padding: 10px 10px 0 10px; /* Reducido padding inferior a 0 */
     position: fixed;
     top: 0;
     left: 0;
@@ -82,7 +82,7 @@ body {
     background: rgba(0, 0, 0, 0.9);
     border: 2px solid red;
     border-radius: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 5px; /* Reducido de 10px */
     text-align: center;
     width: 90%;
     max-width: 420px;
@@ -114,7 +114,7 @@ body {
     flex: 1;
     align-items: center;
     min-height: 0;
-    margin-bottom: -10px; /* Reducir espacio debajo */
+    margin-bottom: 0; /* Reducido a 0 */
 }
 
 #laberinto {
@@ -188,14 +188,14 @@ body {
     box-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
 }
 
-/* CONTROLES - MEJORADO PARA MÓVIL */
+/* CONTROLES - SUBIDOS Y MÁS CERCANOS AL LABERINTO */
 #controles {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
-    padding: 5px; /* Reducido de 8px */
-    margin: 5px 0 0 0; /* Reducido margen inferior */
+    gap: 5px; /* Reducido de 8px */
+    padding: 5px; 
+    margin: 0; /* Sin margen */
     flex-shrink: 0;
 }
 
@@ -250,18 +250,19 @@ body {
     width: 100%;
     max-width: 500px;
     margin: 0 auto;
+    padding-bottom: env(safe-area-inset-bottom, 5px); /* Solo padding para safe area */
 }
 
 /* 📱 MOBILE - MEJORADO */
 @media (max-width: 600px) {
     body {
-        padding: 5px 5px 0 5px; /* Reducido padding inferior */
+        padding: 5px 5px 0 5px; /* Sin padding inferior */
     }
     
     #game-container {
-        padding: 0 5px;
+        padding: 0 5px env(safe-area-inset-bottom, 5px) 5px; /* Solo safe area abajo */
         height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-        justify-content: flex-start; /* Cambiado de space-between */
+        justify-content: flex-start; 
     }
     
     #inicio h1 {
@@ -276,7 +277,7 @@ body {
     #hud {
         font-size: 18px;
         padding: 10px 15px;
-        margin-bottom: 8px;
+        margin-bottom: 3px; /* Muy reducido */
         max-width: 350px;
         margin-top: env(safe-area-inset-top, 0px);
     }
@@ -284,13 +285,17 @@ body {
     #laberinto {
         width: min(90vw, 340px);
         height: min(90vw, 340px);
-        margin: 5px 0;
+        margin: 2px 0; /* Reducido margen */
+    }
+    
+    #contenedor {
+        margin-bottom: -5px; /* Espacio negativo para acercar controles */
     }
     
     #controles {
-        margin: 5px 0 0 0; /* Reducido margen inferior */
-        padding-bottom: max(5px, env(safe-area-inset-bottom, 5px)); /* Reducido padding */
-        gap: 5px; /* Reducido espacio entre botones */
+        margin: 0;
+        padding: 3px;
+        gap: 3px;
     }
     
     #controles button {
@@ -312,7 +317,8 @@ body {
     }
     
     #controles {
-        margin-bottom: 0; /* Sin margen inferior */
+        margin: 0;
+        padding: 5px;
     }
     
     #controles button {
@@ -326,23 +332,23 @@ body {
     #hud {
         font-size: 16px;
         padding: 8px 12px;
-        margin-bottom: 5px;
+        margin-bottom: 2px; /* Mínimo margen */
     }
     
     #laberinto {
         width: min(85vw, 320px);
         height: min(85vw, 320px);
-        margin: 3px 0; /* Reducido margen */
+        margin: 1px 0; /* Mínimo margen */
     }
     
     #contenedor {
-        margin-bottom: -15px; /* Reducir espacio debajo del laberinto */
+        margin-bottom: -8px; /* Más espacio negativo para dispositivos pequeños */
     }
     
     #controles {
-        margin: 0; /* Sin margen */
-        padding: 3px; /* Reducido padding */
-        gap: 4px; /* Menos espacio entre botones */
+        margin: 0;
+        padding: 2px;
+        gap: 2px;
     }
     
     #controles button {
@@ -353,5 +359,16 @@ body {
     
     #controles .fila {
         gap: 14px;
+    }
+}
+
+/* Para pantallas muy altas, mantener flechas cerca */
+@media (min-height: 800px) and (max-width: 600px) {
+    #contenedor {
+        margin-bottom: -15px; /* Más espacio negativo en pantallas altas */
+    }
+    
+    #controles {
+        margin-top: -10px; /* Subir aún más los controles */
     }
 }

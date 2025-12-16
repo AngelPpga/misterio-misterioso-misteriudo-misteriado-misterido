@@ -68,7 +68,10 @@ function cargarNivel() {
     reposicionarMeta();
     reiniciarJugador();
     mensaje.textContent = `Nivel ${nivel} - Escapa del laberinto!`;
-    mensaje.style.color = "red"; // Restaurar color rojo al iniciar nivel
+    // Restaurar estilo rojo normal
+    mensaje.style.color = "red";
+    mensaje.style.textShadow = "0 0 8px red";
+    mensaje.style.animation = "textGlow 2s infinite";
     puedePasar = true;
     video.muted = true;
 }
@@ -222,8 +225,9 @@ function verificarColisionMeta() {
 
 function reinicioPorError(mensajeError) {
     mensaje.textContent = mensajeError;
-    mensaje.style.color = "red"; // Mantener rojo para errores
+    mensaje.style.color = "red";
     mensaje.style.textShadow = "0 0 15px red";
+    mensaje.style.animation = "textGlow 2s infinite";
     
     if (navigator.vibrate) {
         navigator.vibrate(200);
@@ -236,9 +240,29 @@ function pasarNivel() {
     puedePasar = false;
     bloqueado = true;
     
-    // Solo cambiar el color del texto a verde
+    // Cambiar TODO el estilo a verde - color, sombra y animación
     mensaje.style.color = "lime";
-    mensaje.style.textShadow = "0 0 15px lime, 0 0 20px lime";
+    mensaje.style.textShadow = "0 0 10px lime, 0 0 20px lime";
+    mensaje.style.animation = "textGlowGreen 1.5s infinite";
+    
+    // Añadir animación verde si no existe
+    if (!document.querySelector('#green-glow-style')) {
+        const greenStyle = document.createElement('style');
+        greenStyle.id = 'green-glow-style';
+        greenStyle.textContent = `
+            @keyframes textGlowGreen {
+                0%, 100% { 
+                    text-shadow: 0 0 10px lime, 0 0 20px lime;
+                    color: lime;
+                }
+                50% { 
+                    text-shadow: 0 0 20px lime, 0 0 30px lime, 0 0 40px lime;
+                    color: #00ff00;
+                }
+            }
+        `;
+        document.head.appendChild(greenStyle);
+    }
     
     meta.style.transform = "scale(1.3)";
     meta.style.boxShadow = "0 0 30px yellow";
@@ -472,14 +496,21 @@ function cerrarVideo() {
         mensajeVideo.parentNode.removeChild(mensajeVideo);
     }
     
+    // Remover estilo de animación verde si existe
+    const greenStyle = document.getElementById('green-glow-style');
+    if (greenStyle) {
+        greenStyle.parentNode.removeChild(greenStyle);
+    }
+    
     // Ocultar video y mostrar inicio
     jumpscare.style.display = "none";
     nivel = 1;
     inicio.style.display = "flex";
     bloqueado = true;
     mensaje.textContent = "¡Juego completado! Presiona 'Comenzar' para jugar otra vez";
-    mensaje.style.color = "red"; // Restaurar color rojo
-    mensaje.style.textShadow = "0 0 8px red"; // Restaurar sombra roja
+    mensaje.style.color = "red";
+    mensaje.style.textShadow = "0 0 8px red";
+    mensaje.style.animation = "textGlow 2s infinite";
 }
 
 // Añadir CSS para animaciones
