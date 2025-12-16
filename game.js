@@ -145,85 +145,90 @@ setInterval(() => {
     }
 }, 35);
 
-/* TÁCTIL CONTINUO - CORREGIDO */
+/* TÁCTIL CONTINUO - VERSIÓN SIMPLIFICADA Y ROBUSTA */
 document.querySelectorAll("#controles button").forEach(btn => {
-    let isPressing = false;
+    let activeInterval = null;
+    let isActive = false;
     
-    // Evento cuando empieza a tocar
-    btn.addEventListener("touchstart", function(e) {
-        e.preventDefault();
-        if (bloqueado) return;
+    // Función para iniciar movimiento
+    const startMoving = (dir) => {
+        if (bloqueado || isActive) return;
         
-        isPressing = true;
-        const dir = btn.dataset.dir;
+        isActive = true;
         
-        // Iniciar movimiento inmediato
+        // Movimiento inmediato
         if (dir === "up") mover(0, -paso);
         if (dir === "down") mover(0, paso);
         if (dir === "left") mover(-paso, 0);
         if (dir === "right") mover(paso, 0);
         
-        // Iniciar intervalo
-        intervalo = setInterval(() => {
-            if (isPressing && !bloqueado) {
-                if (dir === "up") mover(0, -paso);
-                if (dir === "down") mover(0, paso);
-                if (dir === "left") mover(-paso, 0);
-                if (dir === "right") mover(paso, 0);
-            } else {
-                detener();
+        // Intervalo para movimiento continuo
+        activeInterval = setInterval(() => {
+            if (bloqueado || !isActive) {
+                clearInterval(activeInterval);
+                activeInterval = null;
+                return;
             }
+            
+            if (dir === "up") mover(0, -paso);
+            if (dir === "down") mover(0, paso);
+            if (dir === "left") mover(-paso, 0);
+            if (dir === "right") mover(paso, 0);
         }, 35);
-    }, { passive: false });
+    };
     
-    // Evento cuando suelta el dedo (donde sea)
-    btn.addEventListener("touchend", function(e) {
-        e.preventDefault();
-        isPressing = false;
-        detener();
-    }, { passive: false });
+    // Función para detener movimiento
+    const stopMoving = () => {
+        isActive = false;
+        if (activeInterval) {
+            clearInterval(activeInterval);
+            activeInterval = null;
+        }
+    };
     
-    // Evento cuando el dedo sale del botón (importante para móviles)
-    btn.addEventListener("touchcancel", function(e) {
+    // Eventos para móvil (touch)
+    btn.addEventListener("touchstart", (e) => {
         e.preventDefault();
-        isPressing = false;
-        detener();
-    }, { passive: false });
-    
-    // También para mouse (por si acaso)
-    btn.addEventListener("mousedown", function(e) {
-        e.preventDefault();
-        if (bloqueado) return;
-        
-        isPressing = true;
         const dir = btn.dataset.dir;
-        
-        intervalo = setInterval(() => {
-            if (isPressing && !bloqueado) {
-                if (dir === "up") mover(0, -paso);
-                if (dir === "down") mover(0, paso);
-                if (dir === "left") mover(-paso, 0);
-                if (dir === "right") mover(paso, 0);
-            } else {
-                detener();
-            }
-        }, 35);
+        startMoving(dir);
     });
     
-    btn.addEventListener("mouseup", function() {
-        isPressing = false;
-        detener();
+    btn.addEventListener("touchend", (e) => {
+        e.preventDefault();
+        stopMoving();
     });
     
-    btn.addEventListener("mouseleave", function() {
-        isPressing = false;
-        detener();
+    btn.addEventListener("touchcancel", (e) => {
+        e.preventDefault();
+        stopMoving();
+    });
+    
+    // Eventos para escritorio (mouse)
+    btn.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        const dir = btn.dataset.dir;
+        startMoving(dir);
+    });
+    
+    btn.addEventListener("mouseup", () => {
+        stopMoving();
+    });
+    
+    btn.addEventListener("mouseleave", () => {
+        stopMoving();
+    });
+    
+    // Prevenir arrastre accidental
+    btn.addEventListener("dragstart", (e) => {
+        e.preventDefault();
     });
 });
 
 function detener() {
-    clearInterval(intervalo);
-    intervalo = null;
+    if (intervalo) {
+        clearInterval(intervalo);
+        intervalo = null;
+    }
 }
 
 /* MOVIMIENTO */
@@ -577,3 +582,19 @@ video.addEventListener('contextmenu', e => e.preventDefault());
 
 // Mensaje inicial
 mensaje.textContent = "Presiona 'Comenzar Juego' para iniciar";
+
+// Añadir pull-to-refresh simplificado
+let touchStartY = 0;
+document.addEventListener('touchstart', (e) => {
+    touchStartY = e.touches[0].clientY;
+}, { passive: true });
+
+document.addEventListener('touchend', (e) => {
+    const touchEndY = e.changedTouches[0].clientY;
+    const distance = touchEndY - touchStartY;
+    
+    // Pull-to-refresh si deslizas desde la parte superior
+    if (window.scrollY === 0 && distance > 150) {
+        location.reload();
+    }
+}, { passive: true });
