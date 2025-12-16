@@ -1,132 +1,159 @@
-const bienvenida = document.getElementById("bienvenida");
-const juego = document.getElementById("juego");
-const final = document.getElementById("final");
-
+const laberinto = document.getElementById("laberinto");
 const jugador = document.getElementById("jugador");
 const meta = document.getElementById("meta");
-const laberinto = document.getElementById("laberinto");
-const barra = document.getElementById("barra");
 const mensaje = document.getElementById("mensaje");
+const inicio = document.getElementById("inicio");
+const btnInicio = document.getElementById("btnInicio");
+const jumpscare = document.getElementById("jumpscare");
+const video = document.getElementById("videoFinal");
 
 let nivel = 1;
-let x = 10, y = 10;
-let velocidad = 2;
-let mov = {};
-let bloqueoNivel = false;
+let bloqueado = true;
+let x = 2;
+let y = 2;
+const paso = 1.5;
+
+let teclas = {};
+let intervalo = null;
 
 /* DEFINICIÓN DE NIVELES */
 const niveles = {
-  1: [
-    { x: 120, y: 0, w: 20, h: 250, roja: false }
-  ],
-  2: [
-    { x: 80, y: 0, w: 20, h: 300, roja: true },
-    { x: 200, y: 100, w: 20, h: 300, roja: false }
-  ],
-  3: [
-    { x: 140, y: 0, w: 20, h: 320, roja: true }
-  ]
+    1: [
+        { x: 20, y: 0, w: 5, h: 70, roja: false },
+        { x: 45, y: 20, w: 5, h: 60, roja: true },
+        { x: 65, y: 40, w: 20, h: 5, roja: false }
+    ],
+    2: [
+        { x: 25, y: 0, w: 5, h: 60, roja: true },
+        { x: 50, y: 20, w: 5, h: 80, roja: false },
+        { x: 0, y: 70, w: 60, h: 5, roja: true }
+    ],
+    3: [
+        { x: 20, y: 0, w: 5, h: 90, roja: true },
+        { x: 45, y: 10, w: 5, h: 90, roja: false },
+        { x: 70, y: 0, w: 5, h: 90, roja: true }
+    ]
+};
+
+btnInicio.onclick = () => {
+    inicio.style.display = "none";
+    bloqueado = false;
+    cargarNivel();
 };
 
 function cargarNivel() {
-  laberinto.querySelectorAll(".pared").forEach(p => p.remove());
-  barra.textContent = "Nivel " + nivel;
-  mensaje.textContent = "";
-  x = 10;
-  y = 10;
-  actualizarJugador();
+    document.querySelectorAll(".pared, .pared-roja").forEach(p => p.remove());
 
-  niveles[nivel].forEach(p => {
-    const d = document.createElement("div");
-    d.className = "pared" + (p.roja ? " roja" : "");
-    d.style.left = p.x + "px";
-    d.style.top = p.y + "px";
-    d.style.width = p.w + "px";
-    d.style.height = p.h + "px";
-    laberinto.appendChild(d);
-  });
+    niveles[nivel].forEach(p => {
+        const pared = document.createElement("div");
+        pared.className = p.roja ? "pared-roja" : "pared";
+        Object.assign(pared.style, {
+            left: p.x + "%",
+            top: p.y + "%",
+            width: p.w + "%",
+            height: p.h + "%"
+        });
+        laberinto.appendChild(pared);
+    });
+
+    reiniciarJugador();
+    mensaje.textContent = "Nivel " + nivel;
+}
+
+function reiniciarJugador() {
+    x = 2;
+    y = 2;
+    actualizarJugador();
 }
 
 function actualizarJugador() {
-  jugador.style.left = x + "px";
-  jugador.style.top = y + "px";
+    jugador.style.left = x + "%";
+    jugador.style.top = y + "%";
 }
 
-function colision(a, b) {
-  return !(a.right < b.left || a.left > b.right || a.bottom < b.top || a.top > b.bottom);
+/* TECLADO */
+document.addEventListener("keydown", e => teclas[e.key] = true);
+document.addEventListener("keyup", e => teclas[e.key] = false);
+
+setInterval(() => {
+    if (bloqueado) return;
+    if (teclas["ArrowUp"]) mover(0, -paso);
+    if (teclas["ArrowDown"]) mover(0, paso);
+    if (teclas["ArrowLeft"]) mover(-paso, 0);
+    if (teclas["ArrowRight"]) mover(paso, 0);
+}, 40);
+
+/* TÁCTIL CONTINUO */
+document.querySelectorAll("#controles button").forEach(btn => {
+    btn.addEventListener("pointerdown", e => {
+        e.preventDefault();
+        const dir = btn.dataset.dir;
+        intervalo = setInterval(() => {
+            if (dir === "up") mover(0, -paso);
+            if (dir === "down") mover(0, paso);
+            if (dir === "left") mover(-paso, 0);
+            if (dir === "right") mover(paso, 0);
+        }, 40);
+    });
+
+    btn.addEventListener("pointerup", detener);
+    btn.addEventListener("pointerleave", detener);
+});
+
+function detener() {
+    clearInterval(intervalo);
+    intervalo = null;
 }
 
-function reiniciar() {
-  mensaje.textContent = "Reiniciaste el nivel, no toques las paredes";
-  x = 10;
-  y = 10;
-  actualizarJugador();
+/* MOVIMIENTO Y COLISIONES */
+function mover(dx, dy) {
+    x += dx;
+    y += dy;
+
+    if (x < 0 || y < 0 || x > 95 || y > 95) {
+        reinicioPorError();
+        return;
+    }
+
+    actualizarJugador();
+
+    if (colision(".pared") || colision(".pared-roja")) {
+        reinicioPorError();
+    }
+
+    if (colision("#meta")) {
+        pasarNivel();
+    }
+}
+
+function reinicioPorError() {
+    mensaje.textContent = "Haz reiniciado el nivel, no toques las paredes";
+    reiniciarJugador();
+}
+
+function colision(selector) {
+    const j = jugador.getBoundingClientRect();
+    return [...document.querySelectorAll(selector)].some(el => {
+        const r = el.getBoundingClientRect();
+        return j.left < r.right &&
+               j.right > r.left &&
+               j.top < r.bottom &&
+               j.bottom > r.top;
+    });
 }
 
 function pasarNivel() {
-  if (bloqueoNivel) return;
-  bloqueoNivel = true;
+    bloqueado = true;
+    nivel++;
 
-  if (nivel < 3) {
-    mensaje.textContent = "Pasaste al nivel " + (nivel + 1);
-    setTimeout(() => {
-      nivel++;
-      cargarNivel();
-      bloqueoNivel = false;
-    }, 1000);
-  } else {
-    juego.classList.add("oculto");
-    final.classList.remove("oculto");
-  }
-}
-
-/* BUCLE PRINCIPAL */
-setInterval(() => {
-  if (mov.up) y -= velocidad;
-  if (mov.down) y += velocidad;
-  if (mov.left) x -= velocidad;
-  if (mov.right) x += velocidad;
-
-  actualizarJugador();
-
-  laberinto.querySelectorAll(".pared").forEach(p => {
-    if (colision(jugador.getBoundingClientRect(), p.getBoundingClientRect())) {
-      reiniciar();
+    if (nivel <= 3) {
+        mensaje.textContent = "Pasaste al nivel " + nivel;
+        setTimeout(() => {
+            bloqueado = false;
+            cargarNivel();
+        }, 1200);
+    } else {
+        jumpscare.style.display = "block";
+        video.play();
     }
-  });
-
-  if (colision(jugador.getBoundingClientRect(), meta.getBoundingClientRect())) {
-    pasarNivel();
-  }
-}, 16);
-
-/* CONTROLES TÁCTILES */
-document.querySelectorAll(".btn").forEach(btn => {
-  const d = btn.dataset.dir;
-  btn.addEventListener("touchstart", e => { e.preventDefault(); mov[d] = true; });
-  btn.addEventListener("touchend", () => mov[d] = false);
-  btn.addEventListener("mousedown", () => mov[d] = true);
-  btn.addEventListener("mouseup", () => mov[d] = false);
-});
-
-/* TECLADO */
-window.addEventListener("keydown", e => {
-  if (e.key === "ArrowUp") mov.up = true;
-  if (e.key === "ArrowDown") mov.down = true;
-  if (e.key === "ArrowLeft") mov.left = true;
-  if (e.key === "ArrowRight") mov.right = true;
-});
-window.addEventListener("keyup", e => {
-  if (e.key === "ArrowUp") mov.up = false;
-  if (e.key === "ArrowDown") mov.down = false;
-  if (e.key === "ArrowLeft") mov.left = false;
-  if (e.key === "ArrowRight") mov.right = false;
-});
-
-/* INICIO */
-document.getElementById("btnIniciar").onclick = () => {
-  bienvenida.classList.add("oculto");
-  juego.classList.remove("oculto");
-  nivel = 1;
-  cargarNivel();
-};
+}
