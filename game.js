@@ -15,24 +15,24 @@ const paso = 1.5;
 
 let teclas = {};
 let intervalo = null;
-let ultimoPasoMeta = 0;
+let puedePasar = true;
 
-/* DEFINICIÓN DE NIVELES */
+/* NIVELES (PARED ROJA DEL NIVEL 1 ARREGLADA) */
 const niveles = {
     1: [
-        { x: 35, y: 0, w: 5, h: 70, roja: false },
-        { x: 70, y: 20, w: 5, h: 50, roja: true },   // ← AQUÍ ESTÁ LA ROJA, LEJOS DEL SPAWN
-        { x: 55, y: 45, w: 25, h: 5, roja: false }
+        { x: 15, y: 0, w: 5, h: 70, roja: false },
+        { x: 55, y: 10, w: 5, h: 70, roja: true },
+        { x: 70, y: 45, w: 20, h: 5, roja: false }
     ],
     2: [
-        { x: 30, y: 0, w: 5, h: 60, roja: true },
-        { x: 55, y: 20, w: 5, h: 70, roja: false },
-        { x: 0, y: 75, w: 65, h: 5, roja: true }
+        { x: 25, y: 0, w: 5, h: 60, roja: true },
+        { x: 50, y: 20, w: 5, h: 80, roja: false },
+        { x: 0, y: 70, w: 60, h: 5, roja: true }
     ],
     3: [
-        { x: 30, y: 0, w: 5, h: 90, roja: true },
-        { x: 55, y: 10, w: 5, h: 90, roja: false },
-        { x: 75, y: 0, w: 5, h: 90, roja: true }
+        { x: 20, y: 0, w: 5, h: 90, roja: true },
+        { x: 45, y: 10, w: 5, h: 90, roja: false },
+        { x: 70, y: 0, w: 5, h: 90, roja: true }
     ]
 };
 
@@ -59,6 +59,7 @@ function cargarNivel() {
 
     reiniciarJugador();
     mensaje.textContent = "Nivel " + nivel;
+    puedePasar = true;
 }
 
 function reiniciarJugador() {
@@ -84,7 +85,7 @@ setInterval(() => {
     if (teclas["ArrowRight"]) mover(paso, 0);
 }, 40);
 
-/* TÁCTIL */
+/* TÁCTIL CONTINUO */
 document.querySelectorAll("#controles button").forEach(btn => {
     btn.addEventListener("pointerdown", e => {
         e.preventDefault();
@@ -122,7 +123,7 @@ function mover(dx, dy) {
         reinicioPorError();
     }
 
-    if (colision("#meta")) {
+    if (puedePasar && colision("#meta")) {
         pasarNivel();
     }
 }
@@ -144,10 +145,7 @@ function colision(selector) {
 }
 
 function pasarNivel() {
-    const ahora = Date.now();
-    if (ahora - ultimoPasoMeta < 1000) return;
-    ultimoPasoMeta = ahora;
-
+    puedePasar = false;
     bloqueado = true;
     nivel++;
 

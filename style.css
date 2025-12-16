@@ -1,14 +1,21 @@
+* {
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+}
+
 body {
     background: black;
     color: red;
     font-family: Arial, sans-serif;
     margin: 0;
-    padding-top: 50px;
+    padding-top: 60px;
     overflow-x: hidden;
     text-align: center;
 }
 
-/* PANTALLA INICIO */
+/* INICIO */
 #inicio {
     position: fixed;
     inset: 0;
@@ -18,10 +25,21 @@ body {
     justify-content: center;
     align-items: center;
     z-index: 20;
+    padding: 20px;
+}
+
+#inicio h1 {
+    font-size: 2.2rem;
+}
+
+#inicio p {
+    font-size: 1.2rem;
+    max-width: 420px;
 }
 
 #inicio button {
-    padding: 14px 28px;
+    margin-top: 20px;
+    padding: 14px 30px;
     font-size: 18px;
     background: white;
     color: black;
@@ -30,7 +48,7 @@ body {
 
 /* HUD */
 #hud {
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     font-size: 18px;
     min-height: 24px;
 }
@@ -79,7 +97,7 @@ body {
 
 /* CONTROLES */
 #controles {
-    margin-top: 15px;
+    margin-top: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -89,16 +107,11 @@ body {
 #controles button {
     width: 70px;
     height: 70px;
-    font-size: 30px;
+    font-size: 32px;
     border-radius: 50%;
     border: none;
     background: #900;
     color: white;
-
-    /* NO COPIABLE */
-    user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
     touch-action: none;
 }
 
@@ -122,24 +135,17 @@ body {
     object-fit: contain;
 }
 
-/* AJUSTES CELULAR */
+/* 📱 MOBILE */
 @media (max-width: 600px) {
-    body {
-        padding-top: 80px;
-    }
-
     #inicio h1 {
-        font-size: 28px;
+        font-size: 1.8rem;
     }
 
     #inicio p {
-        font-size: 16px;
-        line-height: 1.4;
-        padding: 0 12px;
+        font-size: 1rem;
     }
 
     #hud {
         font-size: 16px;
-        padding: 0 10px;
     }
 }
