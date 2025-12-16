@@ -16,32 +16,30 @@ const paso = 1.5;
 let teclas = {};
 let intervalo = null;
 let puedePasar = true;
+let videoLoops = 0; // Contador de loops del video
+let videoProtegido = true; // Protección contra clicks accidentales
 
-/* DEFINICIÓN DE NIVELES - CONFIGURACIÓN MEJORADA */
+/* DEFINICIÓN DE NIVELES */
 const niveles = {
     1: [
-        // NIVEL 1: 1 pared roja, 2 grises
-        { x: 40, y: 20, w: 5, h: 60, roja: true },   // Pared roja vertical central
-        { x: 20, y: 30, w: 15, h: 5, roja: false },  // Pared gris horizontal superior
-        { x: 65, y: 60, w: 15, h: 5, roja: false }   // Pared gris horizontal inferior
+        { x: 40, y: 20, w: 5, h: 60, roja: true },
+        { x: 20, y: 30, w: 15, h: 5, roja: false },
+        { x: 65, y: 60, w: 15, h: 5, roja: false }
     ],
 
     2: [
-        // NIVEL 2: 2 paredes rojas, 1 gris
-        { x: 30, y: 25, w: 5, h: 50, roja: true },   // Pared roja vertical izquierda
-        { x: 60, y: 25, w: 5, h: 50, roja: true },   // Pared roja vertical derecha
-        { x: 45, y: 40, w: 10, h: 5, roja: false }   // Pared gris central
+        { x: 30, y: 25, w: 5, h: 50, roja: true },
+        { x: 60, y: 25, w: 5, h: 50, roja: true },
+        { x: 45, y: 40, w: 10, h: 5, roja: false }
     ],
 
     3: [
-        // NIVEL 3: 3 paredes rojas, meta difícil
-        { x: 25, y: 20, w: 5, h: 70, roja: true },   // Pared roja izquierda
-        { x: 50, y: 10, w: 5, h: 70, roja: true },   // Pared roja centro
-        { x: 75, y: 20, w: 5, h: 70, roja: true }    // Pared roja derecha
+        { x: 25, y: 20, w: 5, h: 70, roja: true },
+        { x: 50, y: 10, w: 5, h: 70, roja: true },
+        { x: 75, y: 20, w: 5, h: 70, roja: true }
     ]
 };
 
-// Dimensiones del jugador
 const jugadorAncho = 4;
 const jugadorAlto = 4;
 
@@ -52,10 +50,8 @@ btnInicio.onclick = () => {
 };
 
 function cargarNivel() {
-    // Limpiar paredes anteriores
     document.querySelectorAll(".pared-roja, .pared-gris").forEach(p => p.remove());
 
-    // Crear nuevas paredes
     niveles[nivel].forEach(p => {
         const pared = document.createElement("div");
         pared.className = p.roja ? "pared-roja" : "pared-gris";
@@ -69,31 +65,24 @@ function cargarNivel() {
         laberinto.appendChild(pared);
     });
 
-    // Posicionar meta según el nivel
     reposicionarMeta();
-    
     reiniciarJugador();
     mensaje.textContent = `Nivel ${nivel} - Escapa del laberinto!`;
     puedePasar = true;
-    
-    // Asegurar que el video esté silenciado inicialmente
     video.muted = true;
 }
 
 function reposicionarMeta() {
     switch(nivel) {
         case 1:
-            // Meta fácil - esquina inferior derecha
             meta.style.left = "90%";
             meta.style.top = "90%";
             break;
         case 2:
-            // Meta media - centro derecha
             meta.style.left = "85%";
             meta.style.top = "50%";
             break;
         case 3:
-            // Meta difícil - esquina superior derecha entre paredes
             meta.style.left = "92%";
             meta.style.top = "15%";
             break;
@@ -138,7 +127,7 @@ setInterval(() => {
     if (dx !== 0 || dy !== 0) {
         mover(dx, dy);
     }
-}, 35); // Más rápido
+}, 35);
 
 /* TÁCTIL CONTINUO */
 document.querySelectorAll("#controles button").forEach(btn => {
@@ -150,7 +139,7 @@ document.querySelectorAll("#controles button").forEach(btn => {
             if (dir === "down") mover(0, paso);
             if (dir === "left") mover(-paso, 0);
             if (dir === "right") mover(paso, 0);
-        }, 35); // Más rápido
+        }, 35);
     });
 
     btn.addEventListener("pointerup", detener);
@@ -167,33 +156,26 @@ function mover(dx, dy) {
     const nuevoX = x + dx;
     const nuevoY = y + dy;
 
-    // Verificar límites del laberinto
     if (nuevoX < 0 || nuevoY < 0 || nuevoX > 96 || nuevoY > 96) {
         reinicioPorError("¡Saliste del laberinto!");
         return;
     }
 
-    // Verificar colisiones con paredes
     const colisionRoja = hayColision(nuevoX, nuevoY, true);
     const colisionGris = hayColision(nuevoX, nuevoY, false);
     
-    // Si choca con pared roja, reinicia
     if (colisionRoja) {
         reinicioPorError("¡Tocaste una pared roja!");
         return;
     }
     
-    // Si choca con pared gris, bloquea el movimiento pero no reinicia
     if (colisionGris) {
-        return; // No se mueve, pero no reinicia
+        return;
     }
 
-    // Mover si no hay colisión
     x = nuevoX;
     y = nuevoY;
     actualizarJugador();
-
-    // Verificar colisión con la meta
     verificarColisionMeta();
 }
 
@@ -204,9 +186,7 @@ function hayColision(posX, posY, soloRojas) {
     const jBottom = posY + jugadorAlto;
 
     for (const pared of niveles[nivel]) {
-        // Si soloRojas es true y la pared no es roja, saltar
         if (soloRojas && !pared.roja) continue;
-        // Si soloRojas es false y la pared es roja, saltar
         if (!soloRojas && pared.roja) continue;
         
         const pLeft = pared.x;
@@ -241,8 +221,6 @@ function verificarColisionMeta() {
 
 function reinicioPorError(mensajeError) {
     mensaje.textContent = mensajeError;
-    
-    // Feedback visual rojo
     document.body.style.backgroundColor = "darkred";
     setTimeout(() => {
         document.body.style.backgroundColor = "black";
@@ -250,7 +228,6 @@ function reinicioPorError(mensajeError) {
     
     reiniciarJugador();
     
-    // Vibración en móviles
     if (navigator.vibrate) {
         navigator.vibrate(200);
     }
@@ -260,73 +237,267 @@ function pasarNivel() {
     puedePasar = false;
     bloqueado = true;
     
-    // Feedback visual verde
     document.body.style.backgroundColor = "darkgreen";
     setTimeout(() => {
         document.body.style.backgroundColor = "black";
     }, 300);
     
-    // Efecto en la meta
     meta.style.transform = "scale(1.3)";
     meta.style.boxShadow = "0 0 30px yellow";
     
     if (nivel < 3) {
         mensaje.textContent = `¡Nivel ${nivel} completado! Pasando al siguiente...`;
         
-        // Cambio de nivel más rápido (500ms)
         setTimeout(() => {
             nivel++;
             bloqueado = false;
             cargarNivel();
         }, 500);
     } else {
-        // Nivel 3 completado
+        // Nivel 3 completado - Mostrar video
         mensaje.textContent = "¡HAS GANADO! Preparando sorpresa...";
         
-        // Mostrar video con sonido después de 1 segundo
         setTimeout(() => {
+            // Resetear contador de loops
+            videoLoops = 0;
+            videoProtegido = true;
+            
+            // Configurar eventos del video
+            video.onended = null;
+            video.onclick = null;
+            video.ontimeupdate = null;
+            
+            // Mostrar pantalla del video
             jumpscare.style.display = "block";
-            video.muted = false; // ACTIVAR SONIDO
-            video.volume = 1.0; // VOLUMEN AL MÁXIMO
-            video.play().catch(e => {
-                console.log("Error al reproducir video:", e);
-                // Si falla, intentar con interacción del usuario
-                video.muted = false;
-                video.play();
-            });
             
-            // Cuando termine el video, volver al inicio
-            video.onended = function() {
-                jumpscare.style.display = "none";
-                video.currentTime = 0;
-                video.muted = true;
-                nivel = 1;
-                inicio.style.display = "flex";
-                bloqueado = true;
-                mensaje.textContent = "¡Juego completado! Presiona 'Comenzar' para jugar otra vez";
-            };
+            // Activar sonido
+            video.muted = false;
+            video.volume = 1.0;
             
-            // También permitir reinicio al tocar el video
-            video.onclick = function() {
-                jumpscare.style.display = "none";
-                video.pause();
-                video.currentTime = 0;
-                video.muted = true;
-                nivel = 1;
-                inicio.style.display = "flex";
-                bloqueado = true;
-                mensaje.textContent = "¡Juego completado! Presiona 'Comenzar' para jugar otra vez";
-            };
+            // Intentar reproducir
+            const playPromise = video.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(e => {
+                    console.log("Error al reproducir video:", e);
+                    // Si falla por políticas de autoplay, mostrar mensaje
+                    mostrarMensajeVideo();
+                });
+            }
+            
+            // Configurar protección y contador de loops
+            configurarProteccionVideo();
+            
         }, 1000);
     }
 }
 
-// Inicializar el video correctamente
-video.muted = true; // Inicialmente silenciado
-video.loop = true; // Repetir en bucle
+function configurarProteccionVideo() {
+    // Reiniciar contadores
+    videoLoops = 0;
+    videoProtegido = true;
+    
+    // Detectar cuando el video reinicia (completa un loop)
+    video.addEventListener('timeupdate', function() {
+        // Si el video está cerca del final (último 10%)
+        if (this.currentTime > this.duration * 0.9) {
+            // Incrementar contador cuando se complete
+            setTimeout(() => {
+                videoLoops++;
+                console.log(`Video loop completado: ${videoLoops}`);
+                
+                // Después de 3 loops, permitir click para salir
+                if (videoLoops >= 3) {
+                    videoProtegido = false;
+                    mostrarBotonSalir();
+                }
+            }, 500);
+        }
+    });
+    
+    // Controlar clicks en el video
+    video.onclick = function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        if (!videoProtegido) {
+            // Después de 3 loops, permitir salir
+            cerrarVideo();
+        } else {
+            // Mostrar mensaje de protección
+            mostrarMensajeProteccion();
+        }
+        return false;
+    };
+    
+    // También proteger el contenedor
+    jumpscare.onclick = function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        if (!videoProtegido) {
+            cerrarVideo();
+        } else {
+            mostrarMensajeProteccion();
+        }
+        return false;
+    };
+    
+    // Permitir salir con tecla Escape en cualquier momento
+    document.addEventListener('keydown', function videoKeyHandler(e) {
+        if (e.key === 'Escape') {
+            cerrarVideo();
+            document.removeEventListener('keydown', videoKeyHandler);
+        }
+    });
+}
 
-// Prevenir comportamiento por defecto del video
+function mostrarBotonSalir() {
+    // Crear botón para salir
+    let botonSalir = document.getElementById('boton-salir');
+    if (!botonSalir) {
+        botonSalir = document.createElement('button');
+        botonSalir.id = 'boton-salir';
+        botonSalir.innerHTML = 'VOLVER AL INICIO';
+        botonSalir.style.cssText = `
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: red;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            z-index: 40;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.7);
+            animation: pulse 1.5s infinite;
+        `;
+        document.body.appendChild(botonSalir);
+        
+        botonSalir.onclick = function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            cerrarVideo();
+            return false;
+        };
+    }
+}
+
+function mostrarMensajeProteccion() {
+    // Crear mensaje temporal
+    let mensajeProteccion = document.getElementById('mensaje-proteccion');
+    if (!mensajeProteccion) {
+        mensajeProteccion = document.createElement('div');
+        mensajeProteccion.id = 'mensaje-proteccion';
+        mensajeProteccion.innerHTML = '⚠️ El video se reiniciará automáticamente<br>Espera a que termine 3 veces para salir';
+        mensajeProteccion.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            z-index: 35;
+            border: 2px solid red;
+            animation: fadeInOut 3s forwards;
+        `;
+        document.body.appendChild(mensajeProteccion);
+        
+        setTimeout(() => {
+            if (mensajeProteccion.parentNode) {
+                mensajeProteccion.parentNode.removeChild(mensajeProteccion);
+            }
+        }, 3000);
+    }
+}
+
+function mostrarMensajeVideo() {
+    // Mensaje si no se puede reproducir automáticamente
+    let mensajeVideo = document.getElementById('mensaje-video');
+    if (!mensajeVideo) {
+        mensajeVideo = document.createElement('div');
+        mensajeVideo.id = 'mensaje-video';
+        mensajeVideo.innerHTML = '🎬 Presiona aquí para ver el video<br><small>Toca la pantalla para comenzar</small>';
+        mensajeVideo.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            z-index: 35;
+            border: 3px solid red;
+            cursor: pointer;
+            font-size: 24px;
+        `;
+        document.body.appendChild(mensajeVideo);
+        
+        mensajeVideo.onclick = function() {
+            video.play();
+            if (mensajeVideo.parentNode) {
+                mensajeVideo.parentNode.removeChild(mensajeVideo);
+            }
+        };
+    }
+}
+
+function cerrarVideo() {
+    // Limpiar todo y volver al inicio
+    video.pause();
+    video.currentTime = 0;
+    video.muted = true;
+    videoLoops = 0;
+    videoProtegido = true;
+    
+    // Remover botón de salir si existe
+    const botonSalir = document.getElementById('boton-salir');
+    if (botonSalir) {
+        botonSalir.parentNode.removeChild(botonSalir);
+    }
+    
+    // Remover mensajes si existen
+    const mensajeProteccion = document.getElementById('mensaje-proteccion');
+    if (mensajeProteccion && mensajeProteccion.parentNode) {
+        mensajeProteccion.parentNode.removeChild(mensajeProteccion);
+    }
+    
+    const mensajeVideo = document.getElementById('mensaje-video');
+    if (mensajeVideo && mensajeVideo.parentNode) {
+        mensajeVideo.parentNode.removeChild(mensajeVideo);
+    }
+    
+    // Ocultar video y mostrar inicio
+    jumpscare.style.display = "none";
+    nivel = 1;
+    inicio.style.display = "flex";
+    bloqueado = true;
+    mensaje.textContent = "¡Juego completado! Presiona 'Comenzar' para jugar otra vez";
+}
+
+// Añadir CSS para animaciones
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fadeInOut {
+        0% { opacity: 0; }
+        20% { opacity: 1; }
+        80% { opacity: 1; }
+        100% { opacity: 0; }
+    }
+`;
+document.head.appendChild(style);
+
+// Inicializar el video
+video.muted = true;
+video.loop = true;
 video.addEventListener('contextmenu', e => e.preventDefault());
 
-// Inicializar mensaje
+// Mensaje inicial
 mensaje.textContent = "Presiona 'Comenzar Juego' para iniciar";

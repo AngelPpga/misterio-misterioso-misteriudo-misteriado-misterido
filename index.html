@@ -5,14 +5,12 @@
     <title>Anchetudaaaaa 💀</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <!-- FAVICON CALAVERA -->
     <link rel="icon" type="image/svg+xml"
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💀</text></svg>">
 
     <link rel="stylesheet" href="style.css">
     
     <style>
-        /* Estilos adicionales inline para asegurar funcionamiento */
         .pared-roja {
             background: red !important;
             border: 1px solid darkred !important;
@@ -27,70 +25,83 @@
             transition: left 0.1s ease, top 0.1s ease !important;
         }
         
-        /* Prevenir scroll */
         html, body {
             overflow: hidden;
             height: 100%;
             touch-action: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Estilo para el botón de salida del video */
+        #boton-salir {
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
     </style>
 </head>
 <body>
+    <div id="game-container">
+        <div id="inicio">
+            <h1>💀 ¡Bienvenides! 💀</h1>
+            <p>
+                Completa los <strong style="color: white;">3 niveles</strong>  
+                <br>
+                y participa en la rifa de una <strong style="color: yellow;">ancheta 🎁</strong>
+            </p>
+            <button id="btnInicio">Comenzar Juego</button>
+        </div>
 
-<div id="inicio">
-    <h1>💀 ¡Bienvenides! 💀</h1>
-    <p>
-        Completa los <strong style="color: white;">3 niveles</strong>  
-        <br>
-        y participa en la rifa de una <strong style="color: yellow;">ancheta 🎁</strong>
-    </p>
-    <button id="btnInicio">Comenzar Juego</button>
-</div>
+        <div id="hud">
+            <span id="mensaje">Presiona "Comenzar Juego" para iniciar</span>
+        </div>
 
-<div id="hud">
-    <span id="mensaje">Presiona "Comenzar Juego" para iniciar</span>
-</div>
+        <div id="contenedor">
+            <div id="laberinto">
+                <div id="jugador"></div>
+                <div id="meta"></div>
+            </div>
+        </div>
 
-<div id="contenedor">
-    <div id="laberinto">
-        <div id="jugador"></div>
-        <div id="meta"></div>
-        <!-- Las paredes se generan dinámicamente con JavaScript -->
+        <div id="controles">
+            <button data-dir="up">▲</button>
+            <div class="fila">
+                <button data-dir="left">◀</button>
+                <button data-dir="down">▼</button>
+                <button data-dir="right">▶</button>
+            </div>
+        </div>
     </div>
-</div>
 
-<div id="controles">
-    <button data-dir="up">▲</button>
-    <div class="fila">
-        <button data-dir="left">◀</button>
-        <button data-dir="down">▼</button>
-        <button data-dir="right">▶</button>
+    <div id="jumpscare">
+        <video id="videoFinal" src="piolin.mp4" playsinline loop muted></video>
     </div>
-</div>
 
-<div id="jumpscare">
-    <video id="videoFinal" src="piolin.mp4" playsinline loop muted></video>
-</div>
+    <script src="game.js"></script>
 
-<script src="game.js"></script>
-
-<script>
-    // Script adicional para mejorar la experiencia
-    document.addEventListener('DOMContentLoaded', function() {
-        // Prevenir acciones por defecto en botones táctiles
-        document.querySelectorAll('#controles button').forEach(button => {
-            button.addEventListener('touchstart', function(e) {
-                e.preventDefault();
+    <script>
+        // Prevenir acciones no deseadas
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('#controles button').forEach(button => {
+                button.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                });
             });
-        });
-        
-        // Prevenir scroll táctil
-        document.addEventListener('touchmove', function(e) {
-            if (e.target.closest('#laberinto, #controles')) {
+            
+            document.addEventListener('touchmove', function(e) {
                 e.preventDefault();
-            }
-        }, { passive: false });
-    });
-</script>
+            }, { passive: false });
+            
+            // Prevenir zoom con doble toque
+            let lastTouchEnd = 0;
+            document.addEventListener('touchend', function(e) {
+                const now = Date.now();
+                if (now - lastTouchEnd <= 300) {
+                    e.preventDefault();
+                }
+                lastTouchEnd = now;
+            }, false);
+        });
+    </script>
 </body>
 </html>
