@@ -16,22 +16,22 @@ const paso = 1.5;
 let teclas = {};
 let intervalo = null;
 
-/* DEFINICIÓN DE NIVELES */
+/* NIVELES */
 const niveles = {
     1: [
-        { x: 20, y: 0, w: 5, h: 70, roja: false },
-        { x: 45, y: 20, w: 5, h: 60, roja: true },
+        { x: 20, y: 5, w: 5, h: 70, roja: false },
+        { x: 45, y: 10, w: 5, h: 60, roja: true },
         { x: 65, y: 40, w: 20, h: 5, roja: false }
     ],
     2: [
-        { x: 25, y: 0, w: 5, h: 60, roja: true },
-        { x: 50, y: 20, w: 5, h: 80, roja: false },
-        { x: 0, y: 70, w: 60, h: 5, roja: true }
+        { x: 25, y: 5, w: 5, h: 65, roja: true },
+        { x: 50, y: 15, w: 5, h: 70, roja: false },
+        { x: 5, y: 70, w: 60, h: 5, roja: true }
     ],
     3: [
-        { x: 20, y: 0, w: 5, h: 90, roja: true },
-        { x: 45, y: 10, w: 5, h: 90, roja: false },
-        { x: 70, y: 0, w: 5, h: 90, roja: true }
+        { x: 22, y: 5, w: 5, h: 85, roja: true },
+        { x: 47, y: 5, w: 5, h: 85, roja: false },
+        { x: 72, y: 5, w: 5, h: 85, roja: true }
     ]
 };
 
@@ -57,7 +57,7 @@ function cargarNivel() {
     });
 
     reiniciarJugador();
-    mensaje.textContent = "Nivel " + nivel;
+    mensaje.textContent = `💀 Nivel ${nivel}`;
 }
 
 function reiniciarJugador() {
@@ -105,29 +105,27 @@ function detener() {
     intervalo = null;
 }
 
-/* MOVIMIENTO Y COLISIONES */
+/* MOVIMIENTO */
 function mover(dx, dy) {
     x += dx;
     y += dy;
 
     if (x < 0 || y < 0 || x > 95 || y > 95) {
-        reinicioPorError();
+        reinicio();
         return;
     }
 
     actualizarJugador();
 
     if (colision(".pared") || colision(".pared-roja")) {
-        reinicioPorError();
+        reinicio();
     }
 
-    if (colision("#meta")) {
-        pasarNivel();
-    }
+    if (colision("#meta")) pasarNivel();
 }
 
-function reinicioPorError() {
-    mensaje.textContent = "Haz reiniciado el nivel, no toques las paredes";
+function reinicio() {
+    mensaje.textContent = "💀 Has reiniciado el nivel, no toques las paredes";
     reiniciarJugador();
 }
 
@@ -147,7 +145,7 @@ function pasarNivel() {
     nivel++;
 
     if (nivel <= 3) {
-        mensaje.textContent = "Pasaste al nivel " + nivel;
+        mensaje.textContent = `💀 Pasaste al nivel ${nivel}`;
         setTimeout(() => {
             bloqueado = false;
             cargarNivel();

@@ -1,14 +1,14 @@
+/* RESET CONTROLADO */
 body {
+    margin: 0;
     background: black;
     color: red;
     font-family: Arial, sans-serif;
-    margin: 0;
-    padding-top: 50px; /* ESPACIO SUPERIOR */
-    overflow-x: hidden;
     text-align: center;
+    padding-top: 60px;
 }
 
-/* PANTALLA INICIO */
+/* INICIO */
 #inicio {
     position: fixed;
     inset: 0;
@@ -18,10 +18,21 @@ body {
     justify-content: center;
     align-items: center;
     z-index: 20;
+    padding: 20px;
+}
+
+#inicio h1 {
+    font-size: clamp(28px, 6vw, 42px);
+}
+
+#inicio p {
+    font-size: clamp(16px, 4vw, 20px);
+    max-width: 320px;
 }
 
 #inicio button {
-    padding: 14px 28px;
+    margin-top: 20px;
+    padding: 14px 30px;
     font-size: 18px;
     background: white;
     color: black;
@@ -30,12 +41,12 @@ body {
 
 /* HUD */
 #hud {
-    margin-bottom: 10px;
-    font-size: 18px;
-    min-height: 24px;
+    margin-bottom: 12px;
+    font-size: clamp(16px, 4vw, 20px);
+    min-height: 26px;
 }
 
-/* JUEGO */
+/* LABERINTO */
 #contenedor {
     display: flex;
     justify-content: center;
@@ -47,6 +58,7 @@ body {
     background: #111;
     border: 4px solid red;
     position: relative;
+    overflow: hidden;
 }
 
 #jugador {
@@ -54,8 +66,6 @@ body {
     height: 5%;
     background: white;
     position: absolute;
-    top: 2%;
-    left: 2%;
 }
 
 #meta {
@@ -63,8 +73,8 @@ body {
     height: 8%;
     background: red;
     position: absolute;
-    bottom: 2%;
-    right: 2%;
+    bottom: 3%;
+    right: 3%;
 }
 
 /* PAREDES */
@@ -74,34 +84,39 @@ body {
 }
 
 .pared-roja {
+    position: absolute;
     background: red;
 }
 
 /* CONTROLES */
 #controles {
-    margin-top: 15px;
+    margin-top: 18px;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 10px;
 }
 
+/* AQUÍ evitamos copiar texto */
 #controles button {
-    width: 70px;
-    height: 70px;
-    font-size: 30px;
+    width: 72px;
+    height: 72px;
+    font-size: 34px;
     border-radius: 50%;
     border: none;
     background: #900;
     color: white;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
 }
 
 #controles .fila {
     display: flex;
-    gap: 20px;
+    gap: 18px;
 }
 
-/* VIDEO FINAL */
+/* FINAL */
 #jumpscare {
     position: fixed;
     inset: 0;

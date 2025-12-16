@@ -8,18 +8,22 @@
 </head>
 <body>
 
+<!-- PANTALLA DE INICIO -->
 <div id="inicio">
-    <h1>¡Bienvenides!</h1>
+    <h1>💀 Bienvenides 💀</h1>
     <p>
-        Completa los 3 niveles y participa en la rifa de una ancheta 🎁
+        Completa los <strong>3 niveles</strong><br>
+        y participa en la rifa de una ancheta 🎁
     </p>
-    <button id="btnInicio">Comenzar</button>
+    <button id="btnInicio">COMENZAR</button>
 </div>
 
+<!-- HUD -->
 <div id="hud">
     <span id="mensaje"></span>
 </div>
 
+<!-- JUEGO -->
 <div id="contenedor">
     <div id="laberinto">
         <div id="jugador"></div>
@@ -27,17 +31,19 @@
     </div>
 </div>
 
+<!-- CONTROLES MÓVIL -->
 <div id="controles">
-    <button data-dir="up">⬆️</button>
+    <button data-dir="up">▲</button>
     <div class="fila">
-        <button data-dir="left">⬅️</button>
-        <button data-dir="down">⬇️</button>
-        <button data-dir="right">➡️</button>
+        <button data-dir="left">◀</button>
+        <button data-dir="down">▼</button>
+        <button data-dir="right">▶</button>
     </div>
 </div>
 
+<!-- FINAL -->
 <div id="jumpscare">
-    <video id="videoFinal" src="piolin.mp4" playsinline></video>
+    <video id="videoFinal" src="piolin.mp4" loop playsinline></video>
 </div>
 
 <script src="game.js"></script>
