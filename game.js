@@ -68,6 +68,7 @@ function cargarNivel() {
     reposicionarMeta();
     reiniciarJugador();
     mensaje.textContent = `Nivel ${nivel} - Escapa del laberinto!`;
+    mensaje.style.color = "red"; // Restaurar color rojo al iniciar nivel
     puedePasar = true;
     video.muted = true;
 }
@@ -221,26 +222,23 @@ function verificarColisionMeta() {
 
 function reinicioPorError(mensajeError) {
     mensaje.textContent = mensajeError;
-    document.body.style.backgroundColor = "darkred";
-    setTimeout(() => {
-        document.body.style.backgroundColor = "black";
-    }, 300);
-    
-    reiniciarJugador();
+    mensaje.style.color = "red"; // Mantener rojo para errores
+    mensaje.style.textShadow = "0 0 15px red";
     
     if (navigator.vibrate) {
         navigator.vibrate(200);
     }
+    
+    reiniciarJugador();
 }
 
 function pasarNivel() {
     puedePasar = false;
     bloqueado = true;
     
-    document.body.style.backgroundColor = "darkgreen";
-    setTimeout(() => {
-        document.body.style.backgroundColor = "black";
-    }, 300);
+    // Solo cambiar el color del texto a verde
+    mensaje.style.color = "lime";
+    mensaje.style.textShadow = "0 0 15px lime, 0 0 20px lime";
     
     meta.style.transform = "scale(1.3)";
     meta.style.boxShadow = "0 0 30px yellow";
@@ -480,6 +478,8 @@ function cerrarVideo() {
     inicio.style.display = "flex";
     bloqueado = true;
     mensaje.textContent = "¡Juego completado! Presiona 'Comenzar' para jugar otra vez";
+    mensaje.style.color = "red"; // Restaurar color rojo
+    mensaje.style.textShadow = "0 0 8px red"; // Restaurar sombra roja
 }
 
 // Añadir CSS para animaciones

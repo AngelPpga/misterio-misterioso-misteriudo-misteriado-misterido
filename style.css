@@ -114,6 +114,7 @@ body {
     flex: 1;
     align-items: center;
     min-height: 0;
+    margin-bottom: -10px; /* Reducir espacio debajo */
 }
 
 #laberinto {
@@ -193,8 +194,8 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 8px;
-    padding: 8px;
-    margin: 5px 0;
+    padding: 5px; /* Reducido de 8px */
+    margin: 5px 0 0 0; /* Reducido margen inferior */
     flex-shrink: 0;
 }
 
@@ -254,12 +255,13 @@ body {
 /* 📱 MOBILE - MEJORADO */
 @media (max-width: 600px) {
     body {
-        padding: 5px;
+        padding: 5px 5px 0 5px; /* Reducido padding inferior */
     }
     
     #game-container {
         padding: 0 5px;
         height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+        justify-content: flex-start; /* Cambiado de space-between */
     }
     
     #inicio h1 {
@@ -286,8 +288,9 @@ body {
     }
     
     #controles {
-        margin-bottom: env(safe-area-inset-bottom, 10px);
-        padding-bottom: max(10px, env(safe-area-inset-bottom));
+        margin: 5px 0 0 0; /* Reducido margen inferior */
+        padding-bottom: max(5px, env(safe-area-inset-bottom, 5px)); /* Reducido padding */
+        gap: 5px; /* Reducido espacio entre botones */
     }
     
     #controles button {
@@ -308,6 +311,10 @@ body {
         height: min(80vw, 450px);
     }
     
+    #controles {
+        margin-bottom: 0; /* Sin margen inferior */
+    }
+    
     #controles button {
         width: 70px;
         height: 70px;
@@ -325,6 +332,17 @@ body {
     #laberinto {
         width: min(85vw, 320px);
         height: min(85vw, 320px);
+        margin: 3px 0; /* Reducido margen */
+    }
+    
+    #contenedor {
+        margin-bottom: -15px; /* Reducir espacio debajo del laberinto */
+    }
+    
+    #controles {
+        margin: 0; /* Sin margen */
+        padding: 3px; /* Reducido padding */
+        gap: 4px; /* Menos espacio entre botones */
     }
     
     #controles button {
