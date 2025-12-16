@@ -58,16 +58,28 @@ body {
     color: white;
 }
 
-/* HUD */
+/* HUD - MODIFICA ESTA SECCIÓN */
 #hud {
     margin-bottom: 12px;
-    font-size: 18px;
-    min-height: 24px;
+    font-size: 20px; /* Un poco más grande */
+    min-height: 30px;
     padding: 10px;
     background: rgba(0, 0, 0, 0.8);
     border-bottom: 2px solid red;
+    position: relative;
+    z-index: 5;
 }
 
+/* Añade esto para mejor visualización del mensaje */
+#mensaje {
+    font-weight: bold;
+    text-shadow: 0 0 5px red;
+    padding: 5px 10px;
+    display: inline-block;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 5px;
+    border: 1px solid red;
+}
 /* CONTENEDOR DEL LABERINTO */
 #contenedor {
     display: flex;

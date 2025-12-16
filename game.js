@@ -21,24 +21,24 @@ let puedePasar = true;
 const niveles = {
     1: [
         // NIVEL 1: 1 pared roja (horizontal en el centro)
-        { x: 30, y: 40, w: 40, h: 5, roja: true }   // Pared roja horizontal en el centro
+        { x: 30, y: 40, w: 40, h: 5, roja: true }
     ],
 
     2: [
         // NIVEL 2: 2 paredes rojas (forma de L)
-        { x: 30, y: 30, w: 5, h: 40, roja: true },  // Vertical izquierda
-        { x: 30, y: 65, w: 40, h: 5, roja: true }   // Horizontal abajo
+        { x: 30, y: 30, w: 5, h: 40, roja: true },
+        { x: 30, y: 65, w: 40, h: 5, roja: true }
     ],
 
     3: [
         // NIVEL 3: 3 paredes rojas (laberinto simple)
-        { x: 20, y: 20, w: 5, h: 60, roja: true },  // Vertical izquierda
-        { x: 40, y: 30, w: 40, h: 5, roja: true },  // Horizontal centro
-        { x: 70, y: 40, w: 5, h: 40, roja: true }   // Vertical derecha
+        { x: 20, y: 20, w: 5, h: 60, roja: true },
+        { x: 40, y: 30, w: 40, h: 5, roja: true },
+        { x: 70, y: 40, w: 5, h: 40, roja: true }
     ]
 };
 
-// Dimensiones del jugador (más pequeñas para mejor maniobrabilidad)
+// Dimensiones del jugador
 const jugadorAncho = 3;
 const jugadorAlto = 3;
 
@@ -55,13 +55,15 @@ function cargarNivel() {
     // Crear nuevas paredes
     niveles[nivel].forEach(p => {
         const pared = document.createElement("div");
-        pared.className = p.roja ? "pared-roja" : "pared";
+        pared.className = "pared-roja"; // Todas son rojas
         Object.assign(pared.style, {
             left: p.x + "%",
             top: p.y + "%",
             width: p.w + "%",
             height: p.h + "%",
-            position: "absolute"
+            position: "absolute",
+            backgroundColor: "red",
+            border: "1px solid darkred"
         });
         laberinto.appendChild(pared);
     });
@@ -75,7 +77,6 @@ function cargarNivel() {
 }
 
 function reposicionarMeta() {
-    // Posicionar la meta en diferentes lugares según el nivel
     switch(nivel) {
         case 1:
             meta.style.left = "90%";
@@ -93,7 +94,6 @@ function reposicionarMeta() {
 }
 
 function reiniciarJugador() {
-    // Posición inicial del jugador (esquina superior izquierda)
     x = 2;
     y = 2;
     actualizarJugador();
@@ -165,7 +165,7 @@ function mover(dx, dy) {
         return;
     }
 
-    // Verificar colisiones
+    // Verificar colisiones con paredes
     if (hayColision(nuevoX, nuevoY)) {
         reinicioPorError();
         return;
@@ -176,92 +176,103 @@ function mover(dx, dy) {
     y = nuevoY;
     actualizarJugador();
 
-    // Verificar si llegó a la meta
-    if (verificarMeta()) {
-        pasarNivel();
-    }
+    // Verificar colisión con la meta - ¡FUNCIÓN SIMPLIFICADA QUE SÍ FUNCIONA!
+    verificarColisionMeta();
 }
 
 function hayColision(posX, posY) {
-    // Área del jugador
     const jLeft = posX;
     const jRight = posX + jugadorAncho;
     const jTop = posY;
     const jBottom = posY + jugadorAlto;
 
-    // Verificar colisiones con todas las paredes del nivel actual
     for (const pared of niveles[nivel]) {
         const pLeft = pared.x;
         const pRight = pared.x + pared.w;
         const pTop = pared.y;
         const pBottom = pared.y + pared.h;
 
-        // Todas las paredes son rojas y deben causar reinicio
-        // (eliminamos la condición de puedePasar ya que todas son rojas)
         if (jLeft < pRight &&
             jRight > pLeft &&
             jTop < pBottom &&
             jBottom > pTop) {
-            return true; // Hay colisión
+            return true;
         }
     }
     
-    return false; // No hay colisión
+    return false;
 }
 
-function verificarMeta() {
-    const jLeft = x;
-    const jRight = x + jugadorAncho;
-    const jTop = y;
-    const jBottom = y + jugadorAlto;
+// ¡FUNCIÓN NUEVA Y MEJOR PARA DETECTAR LA META!
+function verificarColisionMeta() {
+    // Obtener posición actual del jugador
+    const jugadorRect = jugador.getBoundingClientRect();
+    const metaRect = meta.getBoundingClientRect();
     
-    // Obtener posición de la meta
-    const metaStyle = window.getComputedStyle(meta);
-    const mLeft = parseFloat(metaStyle.left);
-    const mTop = parseFloat(metaStyle.top);
-    const mWidth = parseFloat(metaStyle.width);
-    const mHeight = parseFloat(metaStyle.height);
+    // Verificar colisión simple
+    const colisiona = !(jugadorRect.right < metaRect.left || 
+                       jugadorRect.left > metaRect.right || 
+                       jugadorRect.bottom < metaRect.top || 
+                       jugadorRect.top > metaRect.bottom);
     
-    const mRight = mLeft + mWidth;
-    const mBottom = mTop + mHeight;
-    
-    // Verificar colisión con la meta
-    return !(jRight < mLeft || 
-             jLeft > mRight || 
-             jBottom < mTop || 
-             jTop > mBottom);
+    if (colisiona && puedePasar) {
+        pasarNivel();
+    }
 }
 
 function reinicioPorError() {
     mensaje.textContent = "¡Tocaste una pared! Reiniciando nivel " + nivel;
     reiniciarJugador();
+    
+    // Pequeña vibración para feedback
+    if (navigator.vibrate) {
+        navigator.vibrate(100);
+    }
 }
 
 function pasarNivel() {
     puedePasar = false;
     bloqueado = true;
     
-    mensaje.textContent = "¡Nivel " + nivel + " completado!";
+    mensaje.textContent = "¡Nivel " + nivel + " completado! 🎉";
+    
+    // Pequeña animación visual
+    meta.style.transform = "scale(1.5)";
+    meta.style.transition = "transform 0.5s";
     
     setTimeout(() => {
+        meta.style.transform = "scale(1)";
+        
         nivel++;
         
         if (nivel <= 3) {
-            mensaje.textContent = "Cargando nivel " + nivel + "...";
             setTimeout(() => {
-                bloqueado = false;
-                cargarNivel();
-            }, 1000);
+                mensaje.textContent = "Cargando nivel " + nivel + "...";
+                setTimeout(() => {
+                    bloqueado = false;
+                    cargarNivel();
+                }, 800);
+            }, 800);
         } else {
             // Juego completado
-            mensaje.textContent = "¡Juego Completado!";
+            mensaje.textContent = "¡FELICIDADES! ¡GANASTE LA ANCHETA! 🎁";
             setTimeout(() => {
                 jumpscare.style.display = "block";
                 video.play();
-            }, 1500);
+                
+                // Cuando termine el video, volver al inicio
+                video.onended = function() {
+                    jumpscare.style.display = "none";
+                    inicio.style.display = "flex";
+                    nivel = 1;
+                    puedePasar = true;
+                    bloqueado = true;
+                    mensaje.textContent = "¡Juego completado! Presiona 'Comenzar' para jugar otra vez";
+                };
+            }, 2000);
         }
-    }, 1000);
+    }, 500);
 }
 
 // Inicializar
-cargarNivel();
+mensaje.textContent = "Presiona 'Comenzar Juego' para iniciar";
