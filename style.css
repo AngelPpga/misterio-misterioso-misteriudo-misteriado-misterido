@@ -3,12 +3,12 @@ body {
     color: red;
     font-family: Arial, sans-serif;
     margin: 0;
-    padding-top: 50px; /* ESPACIO SUPERIOR */
+    padding-top: 70px;
     overflow-x: hidden;
     text-align: center;
 }
 
-/* PANTALLA INICIO */
+/* INICIO */
 #inicio {
     position: fixed;
     inset: 0;
@@ -18,6 +18,16 @@ body {
     justify-content: center;
     align-items: center;
     z-index: 20;
+    padding: 20px;
+}
+
+#inicio h1 {
+    font-size: clamp(26px, 6vw, 40px);
+}
+
+#inicio p {
+    font-size: clamp(16px, 4vw, 20px);
+    max-width: 400px;
 }
 
 #inicio button {
@@ -26,13 +36,14 @@ body {
     background: white;
     color: black;
     border: none;
+    margin-top: 20px;
 }
 
 /* HUD */
 #hud {
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     font-size: 18px;
-    min-height: 24px;
+    min-height: 26px;
 }
 
 /* JUEGO */
@@ -47,6 +58,7 @@ body {
     background: #111;
     border: 4px solid red;
     position: relative;
+    touch-action: none;
 }
 
 #jugador {
@@ -79,26 +91,28 @@ body {
 
 /* CONTROLES */
 #controles {
-    margin-top: 15px;
+    margin-top: 18px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+    user-select: none;
 }
 
 #controles button {
-    width: 70px;
-    height: 70px;
-    font-size: 30px;
+    width: 72px;
+    height: 72px;
+    font-size: 28px;
     border-radius: 50%;
     border: none;
     background: #900;
     color: white;
+    touch-action: none;
 }
 
 #controles .fila {
     display: flex;
-    gap: 20px;
+    gap: 24px;
 }
 
 /* VIDEO FINAL */
@@ -113,5 +127,5 @@ body {
 #jumpscare video {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
 }

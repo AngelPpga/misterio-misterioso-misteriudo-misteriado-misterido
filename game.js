@@ -15,18 +15,19 @@ const paso = 1.5;
 
 let teclas = {};
 let intervalo = null;
+let ultimoPasoMeta = 0;
 
-/* DEFINICIÓN DE NIVELES */
+/* NIVELES */
 const niveles = {
     1: [
         { x: 20, y: 0, w: 5, h: 70, roja: false },
-        { x: 45, y: 20, w: 5, h: 60, roja: true },
-        { x: 65, y: 40, w: 20, h: 5, roja: false }
+        { x: 45, y: 25, w: 5, h: 50, roja: true }, // CORREGIDA
+        { x: 65, y: 40, w: 25, h: 5, roja: false }
     ],
     2: [
         { x: 25, y: 0, w: 5, h: 60, roja: true },
-        { x: 50, y: 20, w: 5, h: 80, roja: false },
-        { x: 0, y: 70, w: 60, h: 5, roja: true }
+        { x: 50, y: 20, w: 5, h: 70, roja: false },
+        { x: 0, y: 70, w: 65, h: 5, roja: true }
     ],
     3: [
         { x: 20, y: 0, w: 5, h: 90, roja: true },
@@ -83,7 +84,7 @@ setInterval(() => {
     if (teclas["ArrowRight"]) mover(paso, 0);
 }, 40);
 
-/* TÁCTIL CONTINUO */
+/* TÁCTIL */
 document.querySelectorAll("#controles button").forEach(btn => {
     btn.addEventListener("pointerdown", e => {
         e.preventDefault();
@@ -105,7 +106,7 @@ function detener() {
     intervalo = null;
 }
 
-/* MOVIMIENTO Y COLISIONES */
+/* MOVIMIENTO */
 function mover(dx, dy) {
     x += dx;
     y += dy;
@@ -143,6 +144,10 @@ function colision(selector) {
 }
 
 function pasarNivel() {
+    const ahora = Date.now();
+    if (ahora - ultimoPasoMeta < 1000) return;
+    ultimoPasoMeta = ahora;
+
     bloqueado = true;
     nivel++;
 
@@ -154,6 +159,7 @@ function pasarNivel() {
         }, 1200);
     } else {
         jumpscare.style.display = "block";
+        video.currentTime = 0;
         video.play();
     }
 }
