@@ -1,18 +1,14 @@
-* {
-    user-select: none;
-    -webkit-user-select: none;
-}
-
 body {
     background: black;
     color: red;
     font-family: Arial, sans-serif;
     margin: 0;
-    overflow: hidden;
+    padding-top: 50px; /* ESPACIO SUPERIOR */
+    overflow-x: hidden;
     text-align: center;
 }
 
-/* INICIO */
+/* PANTALLA INICIO */
 #inicio {
     position: fixed;
     inset: 0;
@@ -25,27 +21,29 @@ body {
 }
 
 #inicio button {
-    padding: 15px 30px;
+    padding: 14px 28px;
     font-size: 18px;
     background: white;
     color: black;
     border: none;
 }
 
-/* JUEGO */
-#mensaje {
-    height: 30px;
-    font-size: 20px;
+/* HUD */
+#hud {
+    margin-bottom: 10px;
+    font-size: 18px;
+    min-height: 24px;
 }
 
+/* JUEGO */
 #contenedor {
     display: flex;
     justify-content: center;
 }
 
 #laberinto {
-    width: min(90vw, 400px);
-    height: min(90vw, 400px);
+    width: min(90vw, 420px);
+    height: min(90vw, 420px);
     background: #111;
     border: 4px solid red;
     position: relative;
@@ -69,16 +67,19 @@ body {
     right: 2%;
 }
 
+/* PAREDES */
 .pared {
     position: absolute;
-    background: #333;
+    background: #444;
+}
+
+.pared-roja {
+    background: red;
 }
 
 /* CONTROLES */
 #controles {
-    position: fixed;
-    bottom: 10px;
-    width: 100%;
+    margin-top: 15px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -93,7 +94,6 @@ body {
     border: none;
     background: #900;
     color: white;
-    touch-action: none;
 }
 
 #controles .fila {
@@ -101,7 +101,7 @@ body {
     gap: 20px;
 }
 
-/* VIDEO */
+/* VIDEO FINAL */
 #jumpscare {
     position: fixed;
     inset: 0;
