@@ -3,16 +3,31 @@
     user-select: none;
     -webkit-user-select: none;
     -webkit-touch-callout: none;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    overflow: hidden;
+    touch-action: none;
 }
 
 body {
     background: black;
     color: red;
     font-family: Arial, sans-serif;
-    margin: 0;
-    padding-top: 60px;
-    overflow-x: hidden;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 100vh;
+    padding: 10px 10px 5px 10px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
 
 /* INICIO */
@@ -30,11 +45,16 @@ body {
 
 #inicio h1 {
     font-size: 2.2rem;
+    margin-bottom: 20px;
+    text-align: center;
 }
 
 #inicio p {
     font-size: 1.2rem;
     max-width: 420px;
+    line-height: 1.5;
+    margin-bottom: 30px;
+    text-align: center;
 }
 
 #inicio button {
@@ -44,80 +64,164 @@ body {
     background: white;
     color: black;
     border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+#inicio button:hover {
+    background: red;
+    color: white;
 }
 
 /* HUD */
 #hud {
-    margin-bottom: 12px;
-    font-size: 18px;
-    min-height: 24px;
+    font-size: 22px;
+    padding: 12px 20px;
+    background: rgba(0, 0, 0, 0.9);
+    border: 2px solid red;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    text-align: center;
+    width: 90%;
+    max-width: 420px;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+    z-index: 10;
+    position: relative;
+    margin-top: 5px;
+    flex-shrink: 0;
 }
 
-/* JUEGO */
+#mensaje {
+    font-weight: bold;
+    text-shadow: 0 0 8px red;
+    padding: 5px;
+    display: block;
+    animation: textGlow 2s infinite;
+}
+
+@keyframes textGlow {
+    0%, 100% { text-shadow: 0 0 8px red; }
+    50% { text-shadow: 0 0 15px red, 0 0 20px red; }
+}
+
+/* CONTENEDOR DEL LABERINTO */
 #contenedor {
     display: flex;
     justify-content: center;
+    padding: 5px;
+    flex: 1;
+    align-items: center;
+    min-height: 0;
 }
 
 #laberinto {
-    width: min(90vw, 420px);
-    height: min(90vw, 420px);
+    width: min(85vw, 380px);
+    height: min(85vw, 380px);
     background: #111;
     border: 4px solid red;
     position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 25px rgba(255, 0, 0, 0.4);
+    flex-shrink: 0;
 }
 
+/* JUGADOR */
 #jugador {
-    width: 5%;
-    height: 5%;
+    width: 4%;
+    height: 4%;
     background: white;
     position: absolute;
     top: 2%;
     left: 2%;
+    border-radius: 50%;
+    z-index: 10;
+    box-shadow: 0 0 15px white;
+    transition: left 0.1s, top 0.1s;
 }
 
+/* META */
 #meta {
-    width: 8%;
-    height: 8%;
-    background: red;
+    width: 6%;
+    height: 6%;
+    background: yellow;
     position: absolute;
-    bottom: 2%;
-    right: 2%;
+    border-radius: 5px;
+    z-index: 5;
+    box-shadow: 0 0 15px yellow;
+    animation: pulse 1.5s infinite;
+    transition: transform 0.3s;
+}
+
+@keyframes pulse {
+    0% { 
+        box-shadow: 0 0 5px yellow, 0 0 10px yellow;
+        opacity: 0.8;
+    }
+    50% { 
+        box-shadow: 0 0 20px yellow, 0 0 30px yellow;
+        opacity: 1;
+    }
+    100% { 
+        box-shadow: 0 0 5px yellow, 0 0 10px yellow;
+        opacity: 0.8;
+    }
 }
 
 /* PAREDES */
-.pared {
+.pared-roja, .pared-gris {
     position: absolute;
-    background: #444;
+    z-index: 2;
 }
 
 .pared-roja {
     background: red;
+    border: 1px solid darkred;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
 }
 
-/* CONTROLES */
+.pared-gris {
+    background: #444;
+    border: 1px solid #666;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+}
+
+/* CONTROLES - MEJORADO PARA MÓVIL */
 #controles {
-    margin-top: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
+    padding: 8px;
+    margin: 5px 0;
+    flex-shrink: 0;
 }
 
 #controles button {
-    width: 70px;
-    height: 70px;
-    font-size: 32px;
+    width: 65px;
+    height: 65px;
+    font-size: 30px;
     border-radius: 50%;
     border: none;
     background: #900;
     color: white;
     touch-action: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#controles button:active {
+    background: red;
+    transform: scale(0.95);
 }
 
 #controles .fila {
     display: flex;
-    gap: 20px;
+    gap: 18px;
 }
 
 /* VIDEO FINAL */
@@ -135,17 +239,101 @@ body {
     object-fit: contain;
 }
 
-/* 📱 MOBILE */
+/* CONTENEDOR PARA TODO EL JUEGO */
+#game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    height: 100vh;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* 📱 MOBILE - MEJORADO */
 @media (max-width: 600px) {
+    body {
+        padding: 5px;
+    }
+    
+    #game-container {
+        padding: 0 5px;
+        height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    }
+    
     #inicio h1 {
         font-size: 1.8rem;
     }
 
     #inicio p {
         font-size: 1rem;
+        padding: 0 15px;
     }
 
     #hud {
+        font-size: 18px;
+        padding: 10px 15px;
+        margin-bottom: 8px;
+        max-width: 350px;
+        margin-top: env(safe-area-inset-top, 0px);
+    }
+    
+    #laberinto {
+        width: min(90vw, 340px);
+        height: min(90vw, 340px);
+        margin: 5px 0;
+    }
+    
+    #controles {
+        margin-bottom: env(safe-area-inset-bottom, 10px);
+        padding-bottom: max(10px, env(safe-area-inset-bottom));
+    }
+    
+    #controles button {
+        width: 60px;
+        height: 60px;
+        font-size: 26px;
+    }
+    
+    #controles .fila {
+        gap: 16px;
+    }
+}
+
+/* TABLET */
+@media (min-width: 601px) and (max-width: 1024px) {
+    #laberinto {
+        width: min(80vw, 450px);
+        height: min(80vw, 450px);
+    }
+    
+    #controles button {
+        width: 70px;
+        height: 70px;
+    }
+}
+
+/* Dispositivos muy pequeños (iPhone SE, etc.) */
+@media (max-height: 700px) and (max-width: 600px) {
+    #hud {
         font-size: 16px;
+        padding: 8px 12px;
+        margin-bottom: 5px;
+    }
+    
+    #laberinto {
+        width: min(85vw, 320px);
+        height: min(85vw, 320px);
+    }
+    
+    #controles button {
+        width: 55px;
+        height: 55px;
+        font-size: 24px;
+    }
+    
+    #controles .fila {
+        gap: 14px;
     }
 }
