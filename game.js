@@ -18,35 +18,37 @@ let intervalo = null;
 let puedePasar = true;
 
 /* NIVELES (PARED ROJA DEL NIVEL 1 ARREGLADA) */
-const niveles = {
+const levels = {
     1: [
-        { x: 11, y: 0, w: 7, h: 100, roja: false },
-        { x: 34, y: 33, w: 66, h: 7, roja: false },
-        { x: 66, y: 66, w: 7, h: 66, roja: true },
-        { x: 20, y: 0, w: 5, h: 70, roja: false },
-        { x: 40, y: 30, w: 40, h: 5, roja: false }
+        { x: 50, y: 0, w: 20, h: 300 },
+        { x: 120, y: 100, w: 200, h: 20 },
+        { x: 280, y: 200, w: 20, h: 200 },
+
+        { x: 20, y: 0, w: 5, h: 70 },
+        { x: 40, y: 30, w: 40, h: 5 }
     ],
 
     2: [
-        { x: 26, y: 0, w: 7, h: 83, roja: true },
-        { x: 53, y: 50, w: 7, h: 83, roja: false },
-        { x: 80, y: 0, w: 7, h: 83, roja: true },
-        { x: 0, y: 100, w: 100, h: 7, roja: true },
-        { x: 25, y: 0, w: 5, h: 60, roja: false },
-        { x: 50, y: 20, w: 5, h: 80, roja: false },
-        { x: 0, y: 70, w: 60, h: 5, roja: false }
+        { x: 80, y: 0, w: 20, h: 250 },
+        { x: 160, y: 150, w: 20, h: 250 },
+        { x: 240, y: 0, w: 20, h: 250 },
+        { x: 0, y: 300, w: 300, h: 20 },
+
+        { x: 25, y: 0, w: 5, h: 60 },
+        { x: 50, y: 20, w: 5, h: 80 },
+        { x: 0, y: 70, w: 60, h: 5 }
     ],
 
     3: [
-        { x: 25, y: 0, w: 5, h: 60, roja: true },
-        { x: 50, y: 20, w: 5, h: 80, roja: false },
-        { x: 0, y: 70, w: 60, h: 5, roja: true },
-        { x: 20, y: 0, w: 5, h: 90, roja: false },
-        { x: 45, y: 10, w: 5, h: 90, roja: false },
-        { x: 70, y: 0, w: 5, h: 90, roja: true }
+        { x: 25, y: 0, w: 5, h: 60 },
+        { x: 50, y: 20, w: 5, h: 80 },
+        { x: 0, y: 70, w: 60, h: 5 },
+
+        { x: 20, y: 0, w: 5, h: 90 },
+        { x: 45, y: 10, w: 5, h: 90 },
+        { x: 70, y: 0, w: 5, h: 90 }
     ]
 };
-
 
 
 btnInicio.onclick = () => {
