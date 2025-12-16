@@ -3,30 +3,21 @@
     user-select: none;
     -webkit-user-select: none;
     -webkit-touch-callout: none;
-    margin: 0;
-    padding: 0;
-}
-
-html, body {
-    height: 100%;
-    overflow: hidden;
-    touch-action: none;
 }
 
 body {
     background: black;
     color: red;
     font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 10px 0 0 0; /* REDUCIDO padding top para SUBIR todo */
+    overflow-x: hidden;
+    text-align: center;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
-    min-height: 100vh;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    justify-content: space-between; /* Distribuye espacio verticalmente */
 }
 
 /* INICIO */
@@ -44,181 +35,112 @@ body {
 
 #inicio h1 {
     font-size: 2.2rem;
-    margin-bottom: 15px;
-    text-align: center;
+    margin-bottom: 20px;
 }
 
 #inicio p {
     font-size: 1.2rem;
-    max-width: 300px;
+    max-width: 420px;
     line-height: 1.5;
-    margin-bottom: 20px;
-    text-align: center;
+    margin-bottom: 30px;
 }
 
 #inicio button {
-    margin-top: 15px;
+    margin-top: 20px;
     padding: 14px 30px;
     font-size: 18px;
     background: white;
     color: black;
     border: none;
-    border-radius: 5px;
     cursor: pointer;
     font-weight: bold;
-    transition: all 0.3s;
 }
 
-#inicio button:hover {
-    background: red;
-    color: white;
-}
-
-/* HUD - MUCHO MÁS PEQUEÑO Y ARRIBA */
+/* HUD - COMPACTO */
 #hud {
-    font-size: 16px;
+    margin-bottom: 10px; /* REDUCIDO */
+    font-size: 18px;
     padding: 8px 12px;
-    background: rgba(0, 0, 0, 0.9);
-    border: 2px solid red;
-    border-radius: 8px;
-    margin: 10px 0 8px 0;
-    text-align: center;
-    width: 95%;
-    max-width: 350px;
-    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
-    z-index: 10;
-    position: relative;
-    flex-shrink: 0;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 5px;
+    width: 90%;
+    max-width: 420px;
 }
 
-#mensaje {
-    font-weight: bold;
-    text-shadow: 0 0 5px red;
-    padding: 2px;
-    display: block;
-    font-size: 15px;
-}
-
-/* CONTENEDOR DEL LABERINTO - REDUCIDO */
+/* CONTENEDOR DEL LABERINTO */
 #contenedor {
     display: flex;
     justify-content: center;
-    padding: 0;
-    flex: 1;
-    align-items: center;
-    min-height: 0;
-    max-height: 55vh;
+    margin: 5px 0 10px 0; /* REDUCIDO margen inferior */
 }
 
 #laberinto {
-    width: min(90vw, 350px);
-    height: min(90vw, 350px);
+    width: min(90vw, 400px);
+    height: min(90vw, 400px);
     background: #111;
-    border: 3px solid red;
+    border: 4px solid red;
     position: relative;
-    overflow: hidden;
-    box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
-    flex-shrink: 0;
 }
 
-/* JUGADOR */
 #jugador {
-    width: 4%;
-    height: 4%;
+    width: 5%;
+    height: 5%;
     background: white;
     position: absolute;
     top: 2%;
     left: 2%;
-    border-radius: 50%;
-    z-index: 10;
-    box-shadow: 0 0 10px white;
-    transition: left 0.1s, top 0.1s;
 }
 
-/* META */
 #meta {
-    width: 4.5%;
-    height: 4.5%;
-    background: yellow;
+    width: 8%;
+    height: 8%;
+    background: red;
     position: absolute;
-    border-radius: 3px;
-    z-index: 5;
-    box-shadow: 0 0 10px yellow;
-    animation: pulse 1.5s infinite;
-    transition: transform 0.3s;
-}
-
-@keyframes pulse {
-    0% { 
-        box-shadow: 0 0 3px yellow, 0 0 6px yellow;
-        opacity: 0.7;
-    }
-    50% { 
-        box-shadow: 0 0 15px yellow, 0 0 20px yellow;
-        opacity: 1;
-    }
-    100% { 
-        box-shadow: 0 0 3px yellow, 0 0 6px yellow;
-        opacity: 0.7;
-    }
+    bottom: 2%;
+    right: 2%;
 }
 
 /* PAREDES */
-.pared-roja, .pared-gris {
+.pared {
     position: absolute;
-    z-index: 2;
+    background: #444;
 }
 
 .pared-roja {
     background: red;
-    border: 1px solid darkred;
-    box-shadow: 0 0 8px rgba(255, 0, 0, 0.7);
 }
 
-.pared-gris {
-    background: #444;
-    border: 1px solid #666;
-    box-shadow: 0 0 4px rgba(255, 255, 255, 0.2);
-}
-
-/* CONTROLES - MUCHO MÁS ARRIBA Y COMPACTO */
+/* CONTROLES - SUBIDOS Y VISIBLES */
 #controles {
+    margin-top: 15px; /* SUBIDOS - menos espacio arriba */
+    margin-bottom: 20px; /* Espacio en la parte inferior */
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
-    padding: 8px;
-    margin: 5px 0 15px 0; /* REDUCIDO el margen inferior */
+    gap: 10px;
+    padding: 10px;
     flex-shrink: 0;
-    width: 100%;
-    position: relative;
-    bottom: 0;
 }
 
 #controles button {
-    width: 58px;
-    height: 58px;
-    font-size: 26px;
+    width: 70px;
+    height: 70px;
+    font-size: 32px;
     border-radius: 50%;
     border: none;
     background: #900;
     color: white;
     touch-action: none;
     cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 #controles button:active {
     background: red;
-    transform: scale(0.95);
 }
 
 #controles .fila {
     display: flex;
-    gap: 18px;
+    gap: 20px;
 }
 
 /* VIDEO FINAL */
@@ -236,134 +158,104 @@ body {
     object-fit: contain;
 }
 
-/* CONTENEDOR PARA TODO EL JUEGO - REORGANIZADO */
-#game-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    height: 100vh;
-    width: 100%;
-    max-width: 400px;
-    margin: 0 auto;
-    padding-top: 10px;
-    padding-bottom: 10px;
+/* BOTÓN PARA RECARGAR */
+#recargar-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: red;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 25;
+    display: none;
 }
 
-/* 📱 MOBILE - CONTROLES MUY ARRIBA */
+#recargar-btn.visible {
+    display: block;
+}
+
+/* 📱 MOBILE - CONTROLES BIEN POSICIONADOS */
 @media (max-width: 600px) {
     body {
-        padding: 0;
-    }
-    
-    #game-container {
-        padding: 5px 0;
+        padding: 5px 0 0 0; /* MÍNIMO padding top */
+        justify-content: flex-start; /* Empieza desde arriba */
         height: 100vh;
-        justify-content: flex-start;
+        overflow-y: auto; /* Permite scroll si es necesario */
     }
     
     #inicio h1 {
         font-size: 1.8rem;
-        margin-bottom: 10px;
     }
 
     #inicio p {
         font-size: 1rem;
-        padding: 0 15px;
-        margin-bottom: 15px;
     }
 
     #hud {
-        font-size: 14px;
+        font-size: 16px;
         padding: 6px 10px;
-        margin: 5px 0 8px 0;
-        max-width: 320px;
-        border-width: 1px;
-    }
-    
-    #contenedor {
-        max-height: 50vh;
-        margin: 5px 0;
+        margin-bottom: 8px;
     }
     
     #laberinto {
-        width: min(92vw, 320px);
-        height: min(92vw, 320px);
-        border-width: 2px;
+        width: min(95vw, 350px);
+        height: min(95vw, 350px);
+        margin: 0 auto;
     }
     
-    /* CONTROLES - MUCHO MÁS COMPACTO Y ARRIBA */
+    /* CONTROLES - SUBIDOS EN MÓVIL */
     #controles {
-        margin: 5px 0 10px 0;
+        margin-top: 10px; /* MUY poco espacio arriba */
+        margin-bottom: 15px;
         padding: 5px;
-        gap: 4px;
-        flex-grow: 0;
-    }
-    
-    #controles button {
-        width: 52px;
-        height: 52px;
-        font-size: 22px;
-    }
-    
-    #controles .fila {
-        gap: 15px;
-    }
-}
-
-/* Dispositivos muy pequeños (iPhone SE, etc.) - CONTROLES ARRIBA */
-@media (max-height: 700px) {
-    #hud {
-        font-size: 13px;
-        padding: 5px 8px;
-        margin: 3px 0 5px 0;
-    }
-    
-    #contenedor {
-        max-height: 45vh;
-    }
-    
-    #laberinto {
-        width: min(90vw, 300px);
-        height: min(90vw, 300px);
-    }
-    
-    #controles {
-        margin: 3px 0 8px 0;
-    }
-    
-    #controles button {
-        width: 48px;
-        height: 48px;
-        font-size: 20px;
-    }
-    
-    #controles .fila {
-        gap: 12px;
-    }
-}
-
-/* Pantallas grandes */
-@media (min-width: 768px) and (min-height: 700px) {
-    #hud {
-        font-size: 18px;
-        padding: 10px 15px;
-        max-width: 400px;
-        margin: 15px 0 10px 0;
-    }
-    
-    #laberinto {
-        width: min(85vw, 380px);
-        height: min(85vw, 380px);
-    }
-    
-    #controles {
-        margin: 10px 0 20px 0;
     }
     
     #controles button {
         width: 65px;
         height: 65px;
-        font-size: 30px;
+        font-size: 28px;
+    }
+    
+    #controles .fila {
+        gap: 15px;
+    }
+    
+    /* Asegurar que todo quepa */
+    #game-container {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+/* Dispositivos muy altos */
+@media (min-height: 800px) {
+    #controles {
+        margin-top: 30px;
+    }
+}
+
+/* Dispositivos muy pequeños */
+@media (max-height: 600px) {
+    #laberinto {
+        width: min(85vw, 320px);
+        height: min(85vw, 320px);
+    }
+    
+    #controles {
+        margin-top: 5px;
+        margin-bottom: 10px;
+    }
+    
+    #controles button {
+        width: 55px;
+        height: 55px;
+        font-size: 24px;
     }
 }

@@ -2,132 +2,79 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Anchetudaaaaa 💀</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
+    <title>Anchetudaaaaa</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
+    <!-- FAVICON CALAVERA -->
     <link rel="icon" type="image/svg+xml"
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💀</text></svg>">
 
     <link rel="stylesheet" href="style.css">
-    
-    <style>
-        .pared-roja { background: red !important; border: 1px solid darkred !important; }
-        .pared-gris { background: #444 !important; border: 1px solid #666 !important; }
-        #jugador { transition: left 0.1s ease, top 0.1s ease !important; }
-        html, body { 
-            overflow: hidden; 
-            height: 100%; 
-            touch-action: none; 
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        /* Asegurar que los controles estén arriba en móvil */
-        @media (max-width: 600px) {
-            #game-container {
-                padding-top: env(safe-area-inset-top);
-            }
-            #controles {
-                margin-top: auto; /* Empuja controles hacia arriba */
-            }
-        }
-    </style>
 </head>
 <body>
-    <div id="game-container">
-        <div id="inicio">
-            <h1>💀 ¡Bienvenides! 💀</h1>
-            <p>
-                Completa los <strong style="color: white;">3 niveles</strong>  
-                <br>
-                y participa en la rifa de una <strong style="color: yellow;">ancheta 🎁</strong>
-            </p>
-            <button id="btnInicio">Comenzar Juego</button>
-        </div>
 
-        <div id="hud">
-            <span id="mensaje">Presiona "Comenzar Juego" para iniciar</span>
-        </div>
+<div id="inicio">
+    <h1>💀 ¡Bienvenides! 💀</h1>
+    <p>
+        Completa los <strong>3 niveles</strong>  
+        <br>
+        y participa en la rifa de una <strong>ancheta 🎁</strong>
+    </p>
+    <button id="btnInicio">Comenzar</button>
+</div>
 
-        <div id="contenedor">
-            <div id="laberinto">
-                <div id="jugador"></div>
-                <div id="meta"></div>
-            </div>
-        </div>
+<div id="hud">
+    <span id="mensaje"></span>
+</div>
 
-        <div id="controles">
-            <button data-dir="up">▲</button>
-            <div class="fila">
-                <button data-dir="left">◀</button>
-                <button data-dir="down">▼</button>
-                <button data-dir="right">▶</button>
-            </div>
-        </div>
+<div id="contenedor">
+    <div id="laberinto">
+        <div id="jugador"></div>
+        <div id="meta"></div>
     </div>
+</div>
 
-    <div id="jumpscare">
-        <video id="videoFinal" src="piolin.mp4" playsinline loop muted preload="auto"></video>
+<div id="controles">
+    <button data-dir="up">▲</button>
+    <div class="fila">
+        <button data-dir="left">◀</button>
+        <button data-dir="down">▼</button>
+        <button data-dir="right">▶</button>
     </div>
+</div>
 
-    <script src="game.js"></script>
+<!-- BOTÓN PARA RECARGAR LA PÁGINA -->
+<button id="recargar-btn" onclick="location.reload()">🔄 Reiniciar Juego</button>
 
-    <script>
-        // Script para optimizar posición en iOS
-        document.addEventListener('DOMContentLoaded', function() {
-            // Ajustar posición en iOS
-            if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
-                const gameContainer = document.getElementById('game-container');
-                const controls = document.getElementById('controles');
-                
-                // Ajustar después de un breve delay
-                setTimeout(() => {
-                    // Hacer el laberinto más pequeño para dar espacio a controles
-                    const laberinto = document.getElementById('laberinto');
-                    laberinto.style.width = 'min(85vw, 300px)';
-                    laberinto.style.height = 'min(85vw, 300px)';
-                    
-                    // Mover controles más arriba
-                    controls.style.marginTop = '10px';
-                    controls.style.marginBottom = '5px';
-                    
-                    // Reducir espacio del contenedor
-                    const contenedor = document.getElementById('contenedor');
-                    contenedor.style.maxHeight = '40vh';
-                }, 100);
-            }
-            
-            // Prevenir zoom
-            document.addEventListener('gesturestart', function(e) {
-                e.preventDefault();
-            });
-            
-            // Prevenir pull-to-refresh
-            let lastTouchY = 0;
-            document.addEventListener('touchstart', function(e) {
-                if (e.touches.length === 1) {
-                    lastTouchY = e.touches[0].clientY;
-                }
-            }, { passive: true });
-            
-            document.addEventListener('touchmove', function(e) {
-                if (e.touches.length === 1) {
-                    const touchY = e.touches[0].clientY;
-                    const touchDeltaY = touchY - lastTouchY;
-                    
-                    // Si el usuario está deslizando hacia abajo desde la parte superior
-                    if (touchDeltaY > 0 && window.scrollY === 0) {
-                        e.preventDefault();
-                    }
-                }
-            }, { passive: false });
-        });
-        
-        // Forzar layout para evitar problemas de renderizado
-        window.addEventListener('load', function() {
-            document.body.style.visibility = 'visible';
-        });
-    </script>
+<div id="jumpscare">
+    <video id="videoFinal" src="piolin.mp4" playsinline loop muted></video>
+</div>
+
+<script src="game.js"></script>
+
+<script>
+    // Mostrar botón de recargar después del video
+    document.getElementById('videoFinal').addEventListener('ended', function() {
+        document.getElementById('recargar-btn').classList.add('visible');
+    });
+    
+    // También mostrar al hacer click en el video
+    document.getElementById('videoFinal').addEventListener('click', function() {
+        document.getElementById('recargar-btn').classList.add('visible');
+    });
+    
+    // Prevenir zoom en móviles
+    document.addEventListener('gesturestart', function(e) {
+        e.preventDefault();
+    });
+    
+    // Permitir scroll táctil si es necesario
+    document.addEventListener('touchmove', function(e) {
+        // Solo prevenir si estamos en los controles
+        if (e.target.closest('#controles')) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+</script>
 </body>
 </html>
